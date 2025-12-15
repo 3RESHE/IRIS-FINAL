@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DTI Evaluation System - Evaluator Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .sidebar-transition { transition: all 0.3s ease; }
+        .icon-rotate { transition: transform 0.3s ease; }
+        .icon-rotate.rotated { transform: rotate(180deg); }
+        .nav-link { transition: all 0.2s ease; }
+        .nav-link:hover { background-color: rgba(59, 130, 246, 0.1); padding-left: 1.5rem; }
+        .nav-link.active { background-color: rgb(59, 130, 246); color: white; border-left: 4px solid white; }
+        .stat-card { transition: all 0.2s ease; }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div id="sidebar" class="w-64 bg-white border-r border-slate-200 shadow-sm sidebar-transition">
+            <div class="p-6 border-b border-slate-200">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-gavel text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold text-slate-900">DTI Evaluator</h1>
+                        <p class="text-xs text-slate-500">Evaluation Team</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="p-4 space-y-2">
+                <a href="dashboard.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50 bg-purple-50 text-purple-600">
+                    <i class="fas fa-home w-5"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-inbox w-5"></i>
+                            <span>Evaluations</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate rotated w-4"></i>
+                    </button>
+                    <div class="submenu ml-8 space-y-1 mt-1">
+                        <a href="assigned-records.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-tasks w-4"></i>
+                            <span>Assigned Records</span>
+                        </a>
+                        <a href="create-evaluation.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-plus w-4"></i>
+                            <span>Create Evaluation</span>
+                        </a>
+                    </div>
+                </div>
+
+                <a href="issued-orders.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-file-contract w-5"></i>
+                    <span>Issued Orders</span>
+                </a>
+
+                <a href="validation-feedback.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-comments w-5"></i>
+                    <span>Validation Feedback</span>
+                </a>
+
+                <a href="evaluation-history.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-history w-5"></i>
+                    <span>History</span>
+                </a>
+            </nav>
+
+            <div class="absolute bottom-0 left-0 w-64 p-4 border-t border-slate-200 bg-white">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-purple-600"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-slate-900">Ana Garcia</p>
+                        <p class="text-xs text-slate-500">Evaluator</p>
+                    </div>
+                    <button onclick="logout()" class="text-slate-400 hover:text-red-600 transition">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Navigation -->
+            <div class="bg-white border-b border-slate-200 shadow-sm px-8 py-4 flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleSidebar()" class="text-slate-600 hover:text-slate-900 transition">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h2 class="text-2xl font-bold text-slate-900">Evaluator Dashboard</h2>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <button class="relative text-slate-600 hover:text-slate-900">
+                        <i class="fas fa-bell text-lg"></i>
+                        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">5</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="flex-1 overflow-auto">
+                <div class="p-8">
+                    <!-- Welcome Card -->
+                    <div class="bg-gradient-to-r from-purple-600 to-indigo-600 rounded-lg shadow-lg p-6 mb-8 text-white">
+                        <h3 class="text-2xl font-bold mb-2">Welcome, Ana Garcia</h3>
+                        <p class="text-purple-100">You have 8 assigned records pending evaluation. 5 are overdue. Please prioritize urgent cases.</p>
+                    </div>
+
+                    <!-- Key Metrics -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                        <div class="stat-card bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-slate-600 text-sm font-medium">Pending Evaluation</p>
+                                <i class="fas fa-inbox text-purple-600 text-xl"></i>
+                            </div>
+                            <p class="text-3xl font-bold text-purple-600">8</p>
+                            <p class="text-xs text-red-600 mt-2"><i class="fas fa-exclamation-circle mr-1"></i>5 overdue</p>
+                        </div>
+
+                        <div class="stat-card bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-slate-600 text-sm font-medium">Evaluations This Month</p>
+                                <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                            </div>
+                            <p class="text-3xl font-bold text-green-600">34</p>
+                            <p class="text-xs text-slate-500 mt-2">Average: 2.8 per day</p>
+                        </div>
+
+                        <div class="stat-card bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-slate-600 text-sm font-medium">Orders Issued</p>
+                                <i class="fas fa-file-contract text-orange-600 text-xl"></i>
+                            </div>
+                            <p class="text-3xl font-bold text-orange-600">28</p>
+                            <p class="text-xs text-slate-500 mt-2">TDO: 12 | CO: 16</p>
+                        </div>
+
+                        <div class="stat-card bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-slate-600 text-sm font-medium">Avg. Processing Time</p>
+                                <i class="fas fa-clock text-blue-600 text-xl"></i>
+                            </div>
+                            <p class="text-3xl font-bold text-blue-600">1.5h</p>
+                            <p class="text-xs text-slate-500 mt-2">Per evaluation</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                        <!-- Pending Tasks -->
+                        <div class="lg:col-span-2 bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-bold text-slate-900">My Pending Evaluations</h3>
+                                <a href="assigned-records.html" class="text-sm text-purple-600 hover:text-purple-800">View All</a>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex items-center gap-4 p-4 border border-slate-200 rounded-lg hover:bg-slate-50 transition cursor-pointer">
+                                    <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-exclamation text-red-600"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-semibold text-slate-900">MON-001 - Fake AirPods Pro</p>
+                                        <p class="text-xs text-slate-600">TechShop PH · Lazada · Overdue by 2 days</p>
+                                    </div>
+                                    <button onclick="window.location.href='create-evaluation.html?id=MON-001'" class="px-3 py-1 bg-purple-600 text-white rounded text-sm hover:bg-purple-700">
+                                        Evaluate
+                                    </button>
+                                </div>
+
+                                <div class="flex items-center gap-4 p-4 border border-slate-200 rounded-lg hover:bg-slate-50 transition cursor-pointer">
+                                    <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-clock text-orange-600"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-semibold text-slate-900">MON-005 - Designer Bags</p>
+                                        <p class="text-xs text-slate-600">Smart Seller Shop · TikTok · Due in 1 hour</p>
+                                    </div>
+                                    <button onclick="window.location.href='create-evaluation.html?id=MON-005'" class="px-3 py-1 bg-purple-600 text-white rounded text-sm hover:bg-purple-700">
+                                        Evaluate
+                                    </button>
+                                </div>
+
+                                <div class="flex items-center gap-4 p-4 border border-slate-200 rounded-lg hover:bg-slate-50 transition cursor-pointer">
+                                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-list text-blue-600"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-semibold text-slate-900">MON-003 - Unauthorized Electronics</p>
+                                        <p class="text-xs text-slate-600">Gray Market Electronics · Facebook · Due in 3 days</p>
+                                    </div>
+                                    <button onclick="window.location.href='create-evaluation.html?id=MON-003'" class="px-3 py-1 bg-purple-600 text-white rounded text-sm hover:bg-purple-700">
+                                        Evaluate
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Stats -->
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+                            <h3 class="text-lg font-bold text-slate-900 mb-4">Performance</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-sm text-slate-700">Completion Rate</span>
+                                        <span class="text-sm font-bold">94%</span>
+                                    </div>
+                                    <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                                        <div class="h-full bg-green-500" style="width: 94%"></div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-sm text-slate-700">SLA Compliance</span>
+                                        <span class="text-sm font-bold">92%</span>
+                                    </div>
+                                    <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                                        <div class="h-full bg-orange-500" style="width: 92%"></div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-sm text-slate-700">Accuracy Rate</span>
+                                        <span class="text-sm font-bold">89%</span>
+                                    </div>
+                                    <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                                        <div class="h-full bg-blue-500" style="width: 89%"></div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4 p-3 bg-purple-50 rounded-lg border border-purple-200">
+                                    <p class="text-xs text-purple-900">
+                                        <i class="fas fa-info-circle mr-1"></i>
+                                        You're performing above team average
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex gap-4">
+                        <button onclick="window.location.href='assigned-records.html'" class="flex items-center gap-2 px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition">
+                            <i class="fas fa-tasks"></i>
+                            View All Assigned Records
+                        </button>
+                        <button onclick="window.location.href='create-evaluation.html'" class="flex items-center gap-2 px-6 py-3 border border-purple-600 text-purple-600 hover:bg-purple-50 rounded-lg transition">
+                            <i class="fas fa-plus"></i>
+                            Start New Evaluation
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar.style.marginLeft === '-16rem') {
+                sidebar.style.marginLeft = '0';
+            } else {
+                sidebar.style.marginLeft = '-16rem';
+            }
+        }
+
+        function toggleSubmenu(button) {
+            const submenu = button.nextElementSibling;
+            const icon = button.querySelector('.icon-rotate');
+
+            if (submenu.classList.contains('hidden')) {
+                submenu.classList.remove('hidden');
+                icon.classList.add('rotated');
+            } else {
+                submenu.classList.add('hidden');
+                icon.classList.remove('rotated');
+            }
+        }
+
+        function logout() {
+            window.location.href = '../index.html';
+        }
+    </script>
+</body>
+</html>

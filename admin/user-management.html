@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DTI Monitoring System - User Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .sidebar-transition {
+            transition: all 0.3s ease;
+        }
+        .icon-rotate {
+            transition: transform 0.3s ease;
+        }
+        .icon-rotate.rotated {
+            transform: rotate(180deg);
+        }
+        .nav-link {
+            transition: all 0.2s ease;
+        }
+        .nav-link:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+            padding-left: 1.5rem;
+        }
+        .nav-link.active {
+            background-color: rgb(59, 130, 246);
+            color: white;
+            border-left: 4px solid white;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.show {
+            display: flex;
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div id="sidebar" class="w-64 bg-white border-r border-slate-200 shadow-sm sidebar-transition">
+            <div class="p-6 border-b border-slate-200">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold text-slate-900">DTI Monitor</h1>
+                        <p class="text-xs text-slate-500">Admin Panel</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Menu -->
+            <nav class="p-4 space-y-2">
+                <!-- Dashboard -->
+                <a href="dashboard.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-home w-5"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <!-- Monitoring -->
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-eye w-5"></i>
+                            <span>Monitoring</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate w-4"></i>
+                    </button>
+                    <div class="hidden submenu ml-8 space-y-1 mt-1">
+                        <a href="monitoring-records.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-list w-4"></i>
+                            <span>Records</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Assignments -->
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-tasks w-5"></i>
+                            <span>Assignments</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate w-4"></i>
+                    </button>
+                    <div class="hidden submenu ml-8 space-y-1 mt-1">
+                        <a href="assignment-management.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-list w-4"></i>
+                            <span>All Assignments</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Evaluations -->
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-check-circle w-5"></i>
+                            <span>Evaluations</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate w-4"></i>
+                    </button>
+                    <div class="hidden submenu ml-8 space-y-1 mt-1">
+                        <a href="evaluation-records.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-list w-4"></i>
+                            <span>Records</span>
+                        </a>
+                        <a href="issued-orders.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-file-alt w-4"></i>
+                            <span>Orders</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Validations -->
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-clipboard-check w-5"></i>
+                            <span>Validations</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate w-4"></i>
+                    </button>
+                    <div class="hidden submenu ml-8 space-y-1 mt-1">
+                        <a href="validation-records.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-list w-4"></i>
+                            <span>All Records</span>
+                        </a>
+                        <a href="#" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-exclamation-triangle w-4"></i>
+                            <span>Issues</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Escalations -->
+                <a href="escalation-management.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-exclamation-circle w-5"></i>
+                    <span>Escalations</span>
+                </a>
+
+                <!-- Reports -->
+                <a href="reporting-analytics.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-chart-bar w-5"></i>
+                    <span>Reports</span>
+                </a>
+
+                <!-- Divider -->
+                <div class="my-4 border-t border-slate-200"></div>
+
+                <!-- Configuration -->
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-cog w-5"></i>
+                            <span>Configuration</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate rotated w-4"></i>
+                    </button>
+                    <div class="submenu ml-8 space-y-1 mt-1">
+                        <a href="user-management.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm bg-blue-50 text-blue-600">
+                            <i class="fas fa-users w-4"></i>
+                            <span>Users</span>
+                        </a>
+                        <a href="geographic-management.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-map-marker-alt w-4"></i>
+                            <span>Geographic</span>
+                        </a>
+                        <a href="platform-management.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-store w-4"></i>
+                            <span>Platforms</span>
+                        </a>
+                                      <a
+                href="category-management.html"
+                class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm"
+              >
+                <i class="fas fa-tag w-4"></i>
+                <span>Categories</span>
+              </a>
+                        <a href="audit-compliance.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-history w-4"></i>
+                            <span>Audit Log</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- User Profile -->
+            <div class="absolute bottom-0 left-0 w-64 p-4 border-t border-slate-200 bg-white">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-blue-600"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-slate-900">Admin User</p>
+                        <p class="text-xs text-slate-500">Administrator</p>
+                    </div>
+                    <button onclick="logout()" class="text-slate-400 hover:text-red-600 transition">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Navigation Bar -->
+            <div class="bg-white border-b border-slate-200 shadow-sm px-8 py-4 flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleSidebar()" class="text-slate-600 hover:text-slate-900 transition">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h2 class="text-2xl font-bold text-slate-900">User Management</h2>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <button class="relative text-slate-600 hover:text-slate-900">
+                        <i class="fas fa-bell text-lg"></i>
+                        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">3</span>
+                    </button>
+                    <button class="text-slate-600 hover:text-slate-900">
+                        <i class="fas fa-search text-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="flex-1 overflow-auto">
+                <div class="p-8">
+                    <!-- Quick Stats -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <p class="text-slate-600 text-sm font-medium mb-2">Total Users</p>
+                            <p class="text-3xl font-bold text-slate-900">28</p>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <p class="text-slate-600 text-sm font-medium mb-2">Active</p>
+                            <p class="text-3xl font-bold text-green-600">24</p>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <p class="text-slate-600 text-sm font-medium mb-2">Inactive</p>
+                            <p class="text-3xl font-bold text-orange-600">4</p>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <p class="text-slate-600 text-sm font-medium mb-2">New This Month</p>
+                            <p class="text-3xl font-bold text-blue-600">3</p>
+                        </div>
+                    </div>
+
+                    <!-- Filters Section -->
+                    <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-6">
+                        <h3 class="text-lg font-bold text-slate-900 mb-4">Filters</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                            <!-- Search -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">Search</label>
+                                <input type="text" id="searchInput" placeholder="Name, email, username..." class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+
+                            <!-- Role Filter -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">Role</label>
+                                <select id="roleFilter" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">All Roles</option>
+                                    <option value="admin">Admin</option>
+                                    <option value="monitor_staff">Monitor Staff</option>
+                                    <option value="evaluator">Evaluator</option>
+                                    <option value="validator">Validator</option>
+                                </select>
+                            </div>
+
+                            <!-- Status Filter -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">Status</label>
+                                <select id="statusFilter" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">All Status</option>
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                </select>
+                            </div>
+
+                            <!-- Department Filter -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">Department</label>
+                                <select id="departmentFilter" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">All Departments</option>
+                                    <option value="Monitoring">Monitoring</option>
+                                    <option value="Evaluation">Evaluation</option>
+                                    <option value="Validation">Validation</option>
+                                    <option value="Administration">Administration</option>
+                                </select>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="flex items-end gap-2">
+                                <button onclick="filterUsers()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
+                                    <i class="fas fa-search mr-2"></i>Filter
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Users Table -->
+                    <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold text-slate-900">All Users</h3>
+                            <button onclick="openNewUserModal()" class="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition text-sm">
+                                <i class="fas fa-plus"></i>
+                                <span>New User</span>
+                            </button>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="border-b border-slate-200">
+                                        <th class="text-left py-3 px-4 font-medium text-slate-700">Name</th>
+                                        <th class="text-left py-3 px-4 font-medium text-slate-700">Username</th>
+                                        <th class="text-left py-3 px-4 font-medium text-slate-700">Email</th>
+                                        <th class="text-left py-3 px-4 font-medium text-slate-700">Role</th>
+                                        <th class="text-left py-3 px-4 font-medium text-slate-700">Department</th>
+                                        <th class="text-left py-3 px-4 font-medium text-slate-700">Status</th>
+                                        <th class="text-left py-3 px-4 font-medium text-slate-700">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTable">
+                                    <!-- Users populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View User Modal -->
+    <div id="viewModal" class="modal">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl mx-4 max-h-screen overflow-auto">
+            <div class="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+                <h3 class="text-xl font-bold text-slate-900">User Details</h3>
+                <button onclick="closeModal('viewModal')" class="text-slate-400 hover:text-slate-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6" id="viewContent"></div>
+            <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex justify-end space-x-3">
+                <button onclick="closeModal('viewModal')" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div id="editModal" class="modal">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl mx-4 max-h-screen overflow-auto">
+            <div class="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+                <h3 class="text-xl font-bold text-slate-900">Edit User</h3>
+                <button onclick="closeModal('editModal')" class="text-slate-400 hover:text-slate-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6" id="editContent"></div>
+            <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex justify-end space-x-3">
+                <button onclick="closeModal('editModal')" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50">
+                    Cancel
+                </button>
+                <button onclick="saveUserChanges()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- New User Modal -->
+    <div id="newUserModal" class="modal">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl mx-4">
+            <div class="border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+                <h3 class="text-xl font-bold text-slate-900">Create New User</h3>
+                <button onclick="closeModal('newUserModal')" class="text-slate-400 hover:text-slate-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6 max-h-96 overflow-auto">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Full Name</label>
+                        <input type="text" id="newName" placeholder="Full name" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Username</label>
+                        <input type="text" id="newUsername" placeholder="Username" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Email</label>
+                        <input type="email" id="newEmail" placeholder="Email address" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Role</label>
+                        <select id="newRole" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">Select role</option>
+                            <option value="monitor_staff">Monitor Staff</option>
+                            <option value="evaluator">Evaluator</option>
+                            <option value="validator">Validator</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Department</label>
+                        <select id="newDepartment" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">Select department</option>
+                            <option value="Monitoring">Monitoring Team</option>
+                            <option value="Evaluation">Evaluation Team</option>
+                            <option value="Validation">Validation Team</option>
+                            <option value="Administration">Administration</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex justify-end space-x-3">
+                <button onclick="closeModal('newUserModal')" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50">
+                    Cancel
+                </button>
+                <button onclick="saveNewUser()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
+                    Create User
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data
+        const users = [
+            {
+                id: 'USR-001',
+                name: 'Maria Santos',
+                username: 'maria.santos',
+                email: 'maria.santos@dti.gov.ph',
+                role: 'admin',
+                department: 'Administration',
+                status: 'active',
+                createdDate: '2025-01-15',
+                lastLogin: '2025-12-12'
+            },
+            {
+                id: 'USR-002',
+                name: 'Juan Dela Cruz',
+                username: 'juan.delacruz',
+                email: 'juan.delacruz@dti.gov.ph',
+                role: 'evaluator',
+                department: 'Evaluation',
+                status: 'active',
+                createdDate: '2025-02-20',
+                lastLogin: '2025-12-12'
+            },
+            {
+                id: 'USR-003',
+                name: 'Rosa Maria Gonzales',
+                username: 'rosa.gonzales',
+                email: 'rosa.gonzales@dti.gov.ph',
+                role: 'validator',
+                department: 'Validation',
+                status: 'active',
+                createdDate: '2025-03-10',
+                lastLogin: '2025-12-11'
+            },
+            {
+                id: 'USR-004',
+                name: 'Carlos Santos',
+                username: 'carlos.santos',
+                email: 'carlos.santos@dti.gov.ph',
+                role: 'validator',
+                department: 'Validation',
+                status: 'active',
+                createdDate: '2025-03-15',
+                lastLogin: '2025-12-10'
+            },
+            {
+                id: 'USR-005',
+                name: 'Ana Garcia',
+                username: 'ana.garcia',
+                email: 'ana.garcia@dti.gov.ph',
+                role: 'evaluator',
+                department: 'Evaluation',
+                status: 'active',
+                createdDate: '2025-04-05',
+                lastLogin: '2025-12-12'
+            },
+            {
+                id: 'USR-006',
+                name: 'Elena Reyes',
+                username: 'elena.reyes',
+                email: 'elena.reyes@dti.gov.ph',
+                role: 'validator',
+                department: 'Validation',
+                status: 'active',
+                createdDate: '2025-04-20',
+                lastLogin: '2025-12-09'
+            },
+            {
+                id: 'USR-007',
+                name: 'Pedro Morales',
+                username: 'pedro.morales',
+                email: 'pedro.morales@dti.gov.ph',
+                role: 'monitor_staff',
+                department: 'Monitoring',
+                status: 'active',
+                createdDate: '2025-05-12',
+                lastLogin: '2025-12-12'
+            },
+            {
+                id: 'USR-008',
+                name: 'Angela Lopez',
+                username: 'angela.lopez',
+                email: 'angela.lopez@dti.gov.ph',
+                role: 'monitor_staff',
+                department: 'Monitoring',
+                status: 'inactive',
+                createdDate: '2025-05-18',
+                lastLogin: '2025-11-30'
+            }
+        ];
+
+        let filteredUsers = [...users];
+        let editingUserId = null;
+
+        // Get role badge
+        function getRoleBadge(role) {
+            const roleMap = {
+                'admin': { color: 'red', text: 'Admin' },
+                'evaluator': { color: 'blue', text: 'Evaluator' },
+                'validator': { color: 'purple', text: 'Validator' },
+                'monitor_staff': { color: 'green', text: 'Monitor Staff' }
+            };
+            return roleMap[role] || { color: 'slate', text: 'Unknown' };
+        }
+
+        // Get status badge
+        function getStatusBadge(status) {
+            const statusMap = {
+                'active': { color: 'green', text: 'Active' },
+                'inactive': { color: 'orange', text: 'Inactive' }
+            };
+            return statusMap[status] || { color: 'slate', text: 'Unknown' };
+        }
+
+        // Render users
+        function renderUsers() {
+            const tbody = document.getElementById('usersTable');
+            tbody.innerHTML = '';
+
+            filteredUsers.forEach(user => {
+                const roleBadge = getRoleBadge(user.role);
+                const statusBadge = getStatusBadge(user.status);
+                const row = `
+                    <tr class="border-b border-slate-100 hover:bg-slate-50 transition">
+                        <td class="py-3 px-4 font-medium text-slate-900">${user.name}</td>
+                        <td class="py-3 px-4 text-slate-700">${user.username}</td>
+                        <td class="py-3 px-4 text-slate-700">${user.email}</td>
+                        <td class="py-3 px-4">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-${roleBadge.color}-100 text-${roleBadge.color}-800">
+                                ${roleBadge.text}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 text-slate-700">${user.department}</td>
+                        <td class="py-3 px-4">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-${statusBadge.color}-100 text-${statusBadge.color}-800">
+                                ${statusBadge.text}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 space-x-2">
+                            <button onclick="viewUser('${user.id}')" class="text-blue-600 hover:text-blue-800 transition text-sm">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                            <button onclick="editUser('${user.id}')" class="text-green-600 hover:text-green-800 transition text-sm">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button onclick="toggleUserStatus('${user.id}')" class="text-orange-600 hover:text-orange-800 transition text-sm">
+                                <i class="fas fa-toggle-on"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // View user details
+        function viewUser(userId) {
+            const user = users.find(u => u.id === userId);
+            if (!user) return;
+
+            const roleBadge = getRoleBadge(user.role);
+            const statusBadge = getStatusBadge(user.status);
+            const content = `
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-xs text-slate-600 mb-1">User ID</p>
+                            <p class="font-medium text-slate-900">${user.id}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-600 mb-1">Status</p>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-${statusBadge.color}-100 text-${statusBadge.color}-800">
+                                ${statusBadge.text}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-200 pt-4">
+                        <h4 class="font-bold text-slate-900 mb-3">Personal Information</h4>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p class="text-slate-600">Full Name</p>
+                                <p class="font-medium text-slate-900">${user.name}</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-600">Username</p>
+                                <p class="font-medium text-slate-900">${user.username}</p>
+                            </div>
+                            <div class="col-span-2">
+                                <p class="text-slate-600">Email</p>
+                                <p class="font-medium text-slate-900">${user.email}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-200 pt-4">
+                        <h4 class="font-bold text-slate-900 mb-3">Role & Department</h4>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p class="text-slate-600">Role</p>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-${roleBadge.color}-100 text-${roleBadge.color}-800">
+                                    ${roleBadge.text}
+                                </span>
+                            </div>
+                            <div>
+                                <p class="text-slate-600">Department</p>
+                                <p class="font-medium text-slate-900">${user.department}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-200 pt-4">
+                        <h4 class="font-bold text-slate-900 mb-3">Account Information</h4>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p class="text-slate-600">Created Date</p>
+                                <p class="font-medium text-slate-900">${user.createdDate}</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-600">Last Login</p>
+                                <p class="font-medium text-slate-900">${user.lastLogin}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('viewContent').innerHTML = content;
+            document.getElementById('viewModal').classList.add('show');
+        }
+
+        // Edit user
+        function editUser(userId) {
+            const user = users.find(u => u.id === userId);
+            if (!user) return;
+
+            editingUserId = userId;
+            const content = `
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Full Name</label>
+                        <input type="text" id="editName" value="${user.name}" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Username</label>
+                        <input type="text" id="editUsername" value="${user.username}" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Email</label>
+                        <input type="email" id="editEmail" value="${user.email}" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Role</label>
+                        <select id="editRole" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="monitor_staff" ${user.role === 'monitor_staff' ? 'selected' : ''}>Monitor Staff</option>
+                            <option value="evaluator" ${user.role === 'evaluator' ? 'selected' : ''}>Evaluator</option>
+                            <option value="validator" ${user.role === 'validator' ? 'selected' : ''}>Validator</option>
+                            <option value="admin" ${user.role === 'admin' ? 'selected' : ''}>Admin</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Department</label>
+                        <select id="editDepartment" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="Monitoring" ${user.department === 'Monitoring' ? 'selected' : ''}>Monitoring Team</option>
+                            <option value="Evaluation" ${user.department === 'Evaluation' ? 'selected' : ''}>Evaluation Team</option>
+                            <option value="Validation" ${user.department === 'Validation' ? 'selected' : ''}>Validation Team</option>
+                            <option value="Administration" ${user.department === 'Administration' ? 'selected' : ''}>Administration</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('editContent').innerHTML = content;
+            document.getElementById('editModal').classList.add('show');
+        }
+
+        // Save user changes
+        function saveUserChanges() {
+            const user = users.find(u => u.id === editingUserId);
+            if (!user) return;
+
+            user.name = document.getElementById('editName').value;
+            user.username = document.getElementById('editUsername').value;
+            user.email = document.getElementById('editEmail').value;
+            user.role = document.getElementById('editRole').value;
+            user.department = document.getElementById('editDepartment').value;
+
+            renderUsers();
+            closeModal('editModal');
+            alert('User updated successfully!');
+        }
+
+        // Toggle user status
+        function toggleUserStatus(userId) {
+            const user = users.find(u => u.id === userId);
+            if (!user) return;
+
+            user.status = user.status === 'active' ? 'inactive' : 'active';
+            renderUsers();
+            alert(`User ${user.status === 'active' ? 'activated' : 'deactivated'} successfully!`);
+        }
+
+        // Filter users
+        function filterUsers() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const roleFilter = document.getElementById('roleFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const departmentFilter = document.getElementById('departmentFilter').value;
+
+            filteredUsers = users.filter(user => {
+                const matchSearch = !searchTerm || 
+                    user.name.toLowerCase().includes(searchTerm) ||
+                    user.email.toLowerCase().includes(searchTerm) ||
+                    user.username.toLowerCase().includes(searchTerm);
+                
+                const matchRole = !roleFilter || user.role === roleFilter;
+                const matchStatus = !statusFilter || user.status === statusFilter;
+                const matchDepartment = !departmentFilter || user.department === departmentFilter;
+
+                return matchSearch && matchRole && matchStatus && matchDepartment;
+            });
+
+            renderUsers();
+        }
+
+        // Open new user modal
+        function openNewUserModal() {
+            document.getElementById('newUserModal').classList.add('show');
+        }
+
+        // Save new user
+        function saveNewUser() {
+            const name = document.getElementById('newName').value;
+            const username = document.getElementById('newUsername').value;
+            const email = document.getElementById('newEmail').value;
+            const role = document.getElementById('newRole').value;
+            const department = document.getElementById('newDepartment').value;
+
+            if (!name || !username || !email || !role || !department) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            const newUser = {
+                id: 'USR-' + String(users.length + 1).padStart(3, '0'),
+                name,
+                username,
+                email,
+                role,
+                department,
+                status: 'active',
+                createdDate: new Date().toISOString().split('T')[0],
+                lastLogin: new Date().toISOString().split('T')[0]
+            };
+
+            users.push(newUser);
+            filteredUsers = [...users];
+            renderUsers();
+            closeModal('newUserModal');
+            alert('User created successfully!');
+
+            // Reset form
+            document.getElementById('newName').value = '';
+            document.getElementById('newUsername').value = '';
+            document.getElementById('newEmail').value = '';
+            document.getElementById('newRole').value = '';
+            document.getElementById('newDepartment').value = '';
+        }
+
+        // Modal functions
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        // Toggle sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar.style.marginLeft === '-16rem') {
+                sidebar.style.marginLeft = '0';
+            } else {
+                sidebar.style.marginLeft = '-16rem';
+            }
+        }
+
+        // Toggle submenu
+        function toggleSubmenu(button) {
+            const submenu = button.nextElementSibling;
+            const icon = button.querySelector('.icon-rotate');
+            
+            if (submenu.classList.contains('hidden')) {
+                submenu.classList.remove('hidden');
+                icon.classList.add('rotated');
+            } else {
+                submenu.classList.add('hidden');
+                icon.classList.remove('rotated');
+            }
+        }
+
+        // Logout
+        function logout() {
+            window.location.href = '../index.html';
+        }
+
+        // Initialize
+        renderUsers();
+    </script>
+</body>
+</html>

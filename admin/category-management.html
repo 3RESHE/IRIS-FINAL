@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DTI Monitoring System - Category Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .sidebar-transition {
+            transition: all 0.3s ease;
+        }
+        .icon-rotate {
+            transition: transform 0.3s ease;
+        }
+        .icon-rotate.rotated {
+            transform: rotate(180deg);
+        }
+        .nav-link {
+            transition: all 0.2s ease;
+        }
+        .nav-link:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+            padding-left: 1.5rem;
+        }
+        .nav-link.active {
+            background-color: rgb(59, 130, 246);
+            color: white;
+            border-left: 4px solid white;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 50;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div id="sidebar" class="w-64 bg-white border-r border-slate-200 shadow-sm sidebar-transition">
+            <div class="p-6 border-b border-slate-200">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold text-slate-900">DTI Monitor</h1>
+                        <p class="text-xs text-slate-500">Admin Panel</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Menu -->
+            <nav class="p-4 space-y-2">
+                <a href="dashboard.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-home w-5"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <!-- Monitoring -->
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-eye w-5"></i>
+                            <span>Monitoring</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate w-4"></i>
+                    </button>
+                    <div class="hidden submenu ml-8 space-y-1 mt-1">
+                        <a href="monitoring-records.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-list w-4"></i>
+                            <span>Records</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Assignments -->
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-tasks w-5"></i>
+                            <span>Assignments</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate w-4"></i>
+                    </button>
+                    <div class="hidden submenu ml-8 space-y-1 mt-1">
+                        <a href="assignment-management.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-list w-4"></i>
+                            <span>All Assignments</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Evaluations -->
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-check-circle w-5"></i>
+                            <span>Evaluations</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate w-4"></i>
+                    </button>
+                    <div class="hidden submenu ml-8 space-y-1 mt-1">
+                        <a href="evaluation-records.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-list w-4"></i>
+                            <span>Records</span>
+                        </a>
+                        <a href="issued-orders.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-file-alt w-4"></i>
+                            <span>Orders</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Validations -->
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-clipboard-check w-5"></i>
+                            <span>Validations</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate w-4"></i>
+                    </button>
+                    <div class="hidden submenu ml-8 space-y-1 mt-1">
+                        <a href="validation-records.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-list w-4"></i>
+                            <span>All Records</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Escalations -->
+                <a href="escalation-management.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-exclamation-circle w-5"></i>
+                    <span>Escalations</span>
+                </a>
+
+                <!-- Reports -->
+                <a href="reporting-analytics.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-chart-bar w-5"></i>
+                    <span>Reports</span>
+                </a>
+
+                <!-- Divider -->
+                <div class="my-4 border-t border-slate-200"></div>
+
+                <!-- Configuration -->
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-cog w-5"></i>
+                            <span>Configuration</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate w-4"></i>
+                    </button>
+                    <div class="hidden submenu ml-8 space-y-1 mt-1">
+                        <a href="user-management.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-users w-4"></i>
+                            <span>Users</span>
+                        </a>
+                        <a href="geographic-management.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-map-marker-alt w-4"></i>
+                            <span>Geographic</span>
+                        </a>
+                        <a href="platform-management.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-store w-4"></i>
+                            <span>Platforms</span>
+                        </a>
+                        <a href="category-management.html" class="nav-link active flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm bg-blue-50 text-blue-600">
+                            <i class="fas fa-tag w-4"></i>
+                            <span>Categories</span>
+                        </a>
+                        <a href="audit-compliance.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-history w-4"></i>
+                            <span>Audit Log</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- User Profile -->
+            <div class="absolute bottom-0 left-0 w-64 p-4 border-t border-slate-200 bg-white">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-blue-600"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-slate-900">Admin User</p>
+                        <p class="text-xs text-slate-500">Administrator</p>
+                    </div>
+                    <button onclick="logout()" class="text-slate-400 hover:text-red-600 transition">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Navigation Bar -->
+            <div class="bg-white border-b border-slate-200 shadow-sm px-8 py-4 flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleSidebar()" class="text-slate-600 hover:text-slate-900 transition">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h2 class="text-2xl font-bold text-slate-900">Category Management</h2>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="relative text-slate-600 hover:text-slate-900">
+                        <i class="fas fa-bell text-lg"></i>
+                        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">2</span>
+                    </button>
+                    <button onclick="openAddModal()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium flex items-center gap-2 transition">
+                        <i class="fas fa-plus"></i>
+                        Add Category
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="flex-1 overflow-auto">
+                <div class="p-8">
+                    <!-- Stats -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <p class="text-slate-600 text-sm font-medium mb-2">Total Categories</p>
+                            <p class="text-3xl font-bold text-blue-600" id="totalCategories">14</p>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <p class="text-slate-600 text-sm font-medium mb-2">Active Categories</p>
+                            <p class="text-3xl font-bold text-green-600" id="activeCategories">14</p>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <p class="text-slate-600 text-sm font-medium mb-2">Last Updated</p>
+                            <p class="text-sm font-bold text-slate-900" id="lastUpdated">Dec 15, 2025</p>
+                        </div>
+                    </div>
+
+                    <!-- Search and Filter -->
+                    <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-6">
+                        <div class="flex gap-4">
+                            <input type="text" id="searchInput" placeholder="Search categories..." class="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <button onclick="filterCategories()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-medium transition">
+                                <i class="fas fa-search mr-2"></i>Search
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Categories Table -->
+                    <div class="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="bg-slate-50 border-b border-slate-200">
+                                    <tr>
+                                        <th class="text-left py-3 px-6 font-medium text-slate-700">Category Name</th>
+                                        <th class="text-left py-3 px-6 font-medium text-slate-700">Description</th>
+                                        <th class="text-left py-3 px-6 font-medium text-slate-700">Created Date</th>
+                                        <th class="text-left py-3 px-6 font-medium text-slate-700">Last Updated</th>
+                                        <th class="text-left py-3 px-6 font-medium text-slate-700">Status</th>
+                                        <th class="text-left py-3 px-6 font-medium text-slate-700">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="categoriesTableBody">
+                                    <!-- Populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Category Modal -->
+    <div id="categoryModal" class="modal">
+        <div class="modal-content">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-bold text-slate-900" id="modalTitle">Add Category</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <form onsubmit="saveCategory(event)">
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Category Name *</label>
+                    <input type="text" id="categoryName" placeholder="Enter category name" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-slate-700 mb-2">Description *</label>
+                    <textarea id="categoryDescription" placeholder="Enter category description" rows="3" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" required></textarea>
+                </div>
+
+                <div class="flex gap-3">
+                    <button type="button" onclick="closeModal()" class="flex-1 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 font-medium transition">
+                        Cancel
+                    </button>
+                    <button type="submit" class="flex-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition">
+                        Save Category
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <div class="mb-4">
+                <h3 class="text-xl font-bold text-slate-900">Delete Category</h3>
+                <p class="text-slate-600 mt-2">Are you sure you want to delete this category? This action cannot be undone.</p>
+            </div>
+
+            <div class="flex gap-3">
+                <button type="button" onclick="closeDeleteModal()" class="flex-1 px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50 font-medium transition">
+                    Cancel
+                </button>
+                <button type="button" onclick="confirmDelete()" class="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium transition">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let categories = [
+            { id: 1, name: 'Food and Beverages', description: 'Food products, drinks, and beverages', createdDate: '2025-01-10', updatedDate: '2025-12-15', status: 'active' },
+            { id: 2, name: 'Appliances', description: 'Home and kitchen appliances', createdDate: '2025-01-12', updatedDate: '2025-12-14', status: 'active' },
+            { id: 3, name: 'Electronics (Gadgets)', description: 'Electronic devices and gadgets', createdDate: '2025-01-15', updatedDate: '2025-12-13', status: 'active' },
+            { id: 4, name: 'Travel', description: 'Travel accessories and luggage', createdDate: '2025-01-18', updatedDate: '2025-12-12', status: 'active' },
+            { id: 5, name: 'Furniture', description: 'Furniture and home decor', createdDate: '2025-01-20', updatedDate: '2025-12-11', status: 'active' },
+            { id: 6, name: 'Hardware', description: 'Tools and hardware supplies', createdDate: '2025-01-22', updatedDate: '2025-12-10', status: 'active' },
+            { id: 7, name: 'Fashion', description: 'Clothing and fashion accessories', createdDate: '2025-01-25', updatedDate: '2025-12-09', status: 'active' },
+            { id: 8, name: 'Cosmetics and Personal Care', description: 'Beauty and personal care products', createdDate: '2025-01-28', updatedDate: '2025-12-08', status: 'active' },
+            { id: 9, name: 'Toys, Hobbies, Collectibles', description: 'Toys and hobby related items', createdDate: '2025-02-01', updatedDate: '2025-12-07', status: 'active' },
+            { id: 10, name: 'Arts and Crafts', description: 'Art supplies and craft materials', createdDate: '2025-02-05', updatedDate: '2025-12-06', status: 'active' },
+            { id: 11, name: 'Pet Essentials', description: 'Pet supplies and accessories', createdDate: '2025-02-08', updatedDate: '2025-12-05', status: 'active' },
+            { id: 12, name: 'Health and Wellness', description: 'Health and wellness products', createdDate: '2025-02-12', updatedDate: '2025-12-04', status: 'active' },
+            { id: 13, name: 'Plants and Gardening', description: 'Plants and gardening supplies', createdDate: '2025-02-15', updatedDate: '2025-12-03', status: 'active' },
+            { id: 14, name: 'Home Essentials', description: 'Essential household items', createdDate: '2025-02-18', updatedDate: '2025-12-02', status: 'active' }
+        ];
+
+        let filteredCategories = [...categories];
+        let editingId = null;
+
+        function renderTable() {
+            const tbody = document.getElementById('categoriesTableBody');
+            tbody.innerHTML = '';
+
+            filteredCategories.forEach(category => {
+                const row = `
+                    <tr class="border-b border-slate-100 hover:bg-slate-50 transition">
+                        <td class="py-3 px-6 font-medium text-slate-900">${category.name}</td>
+                        <td class="py-3 px-6 text-slate-700 text-sm">${category.description || '-'}</td>
+                        <td class="py-3 px-6 text-slate-700">${formatDate(category.createdDate)}</td>
+                        <td class="py-3 px-6 text-slate-700">${formatDate(category.updatedDate)}</td>
+                        <td class="py-3 px-6">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <i class="fas fa-check-circle mr-1"></i>Active
+                            </span>
+                        </td>
+                        <td class="py-3 px-6 flex gap-2">
+                            <button onclick="openEditModal(${category.id})" class="px-3 py-1 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded text-sm font-medium transition">
+                                <i class="fas fa-edit mr-1"></i>Edit
+                            </button>
+                            <button onclick="openDeleteModal(${category.id})" class="px-3 py-1 bg-red-100 hover:bg-red-200 text-red-700 rounded text-sm font-medium transition">
+                                <i class="fas fa-trash mr-1"></i>Delete
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+
+        function openAddModal() {
+            editingId = null;
+            document.getElementById('modalTitle').textContent = 'Add Category';
+            document.getElementById('categoryName').value = '';
+            document.getElementById('categoryDescription').value = '';
+            document.getElementById('categoryModal').classList.add('active');
+        }
+
+        function openEditModal(id) {
+            const category = categories.find(c => c.id === id);
+            if (!category) return;
+
+            editingId = id;
+            document.getElementById('modalTitle').textContent = 'Edit Category';
+            document.getElementById('categoryName').value = category.name;
+            document.getElementById('categoryDescription').value = category.description;
+            document.getElementById('categoryModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('categoryModal').classList.remove('active');
+            editingId = null;
+        }
+
+        function saveCategory(event) {
+            event.preventDefault();
+            const name = document.getElementById('categoryName').value.trim();
+            const description = document.getElementById('categoryDescription').value.trim();
+
+            if (!name || !description) {
+                alert('Please fill in all required fields');
+                return;
+            }
+
+            const today = new Date().toISOString().split('T')[0];
+
+            if (editingId) {
+                const category = categories.find(c => c.id === editingId);
+                if (category) {
+                    category.name = name;
+                    category.description = description;
+                    category.updatedDate = today;
+                }
+            } else {
+                const newId = Math.max(...categories.map(c => c.id), 0) + 1;
+                categories.push({
+                    id: newId,
+                    name: name,
+                    description: description,
+                    createdDate: today,
+                    updatedDate: today,
+                    status: 'active'
+                });
+            }
+
+            filteredCategories = [...categories];
+            renderTable();
+            updateStats();
+            closeModal();
+        }
+
+        function openDeleteModal(id) {
+            editingId = id;
+            document.getElementById('deleteModal').classList.add('active');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('active');
+            editingId = null;
+        }
+
+        function confirmDelete() {
+            if (editingId) {
+                categories = categories.filter(c => c.id !== editingId);
+                filteredCategories = [...categories];
+                renderTable();
+                updateStats();
+                closeDeleteModal();
+            }
+        }
+
+        function filterCategories() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            filteredCategories = categories.filter(c => 
+                c.name.toLowerCase().includes(searchTerm)
+            );
+            renderTable();
+        }
+
+        function updateStats() {
+            document.getElementById('totalCategories').textContent = categories.length;
+            document.getElementById('activeCategories').textContent = categories.filter(c => c.status === 'active').length;
+            const dates = categories.map(c => new Date(c.updatedDate));
+            const latestDate = new Date(Math.max(...dates));
+            document.getElementById('lastUpdated').textContent = latestDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar.style.marginLeft === '-16rem') {
+                sidebar.style.marginLeft = '0';
+            } else {
+                sidebar.style.marginLeft = '-16rem';
+            }
+        }
+
+        function toggleSubmenu(button) {
+            const submenu = button.nextElementSibling;
+            const icon = button.querySelector('.icon-rotate');
+            
+            if (submenu.classList.contains('hidden')) {
+                submenu.classList.remove('hidden');
+                icon.classList.add('rotated');
+            } else {
+                submenu.classList.add('hidden');
+                icon.classList.remove('rotated');
+            }
+        }
+
+        function logout() {
+            window.location.href = '../index.html';
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('categoryModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        document.getElementById('deleteModal').addEventListener('click', function(e) {
+            if (e.target === this) closeDeleteModal();
+        });
+
+        // Initialize
+        renderTable();
+        updateStats();
+    </script>
+</body>
+</html>

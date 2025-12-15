@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DTI Monitoring System - View Monitoring Record</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .sidebar-transition {
+            transition: all 0.3s ease;
+        }
+        .icon-rotate {
+            transition: transform 0.3s ease;
+        }
+        .icon-rotate.rotated {
+            transform: rotate(180deg);
+        }
+        .nav-link {
+            transition: all 0.2s ease;
+        }
+        .nav-link:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+            padding-left: 1.5rem;
+        }
+        .nav-link.active {
+            background-color: rgb(59, 130, 246);
+            color: white;
+            border-left: 4px solid white;
+        }
+        .detail-card {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .detail-section-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .detail-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .detail-item {
+            border-left: 3px solid #3b82f6;
+            padding-left: 1rem;
+        }
+        .detail-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+        }
+        .detail-value {
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #1e293b;
+            word-break: break-word;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.375rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .tab-button {
+            padding: 0.75rem 1rem;
+            border-bottom: 2px solid transparent;
+            color: #64748b;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .tab-button.active {
+            border-bottom-color: #3b82f6;
+            color: #3b82f6;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div id="sidebar" class="w-64 bg-white border-r border-slate-200 shadow-sm sidebar-transition">
+            <div class="p-6 border-b border-slate-200">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold text-slate-900">DTI Monitor</h1>
+                        <p class="text-xs text-slate-500">Monitor Staff</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="p-4 space-y-2">
+                <a href="dashboard.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-home w-5"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-eye w-5"></i>
+                            <span>Monitoring Records</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate rotated w-4"></i>
+                    </button>
+                    <div class="submenu ml-8 space-y-1 mt-1">
+                        <a href="monitoring-records.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm bg-blue-50 text-blue-600">
+                            <i class="fas fa-list w-4"></i>
+                            <span>View Records</span>
+                        </a>
+                        <a href="create-monitoring-record.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-plus w-4"></i>
+                            <span>Create Record</span>
+                        </a>
+                    </div>
+                </div>
+
+
+                <a href="monitoring-reports.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-chart-bar w-5"></i>
+                    <span>Reports</span>
+                </a>
+            </nav>
+
+            <div class="absolute bottom-0 left-0 w-64 p-4 border-t border-slate-200 bg-white">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-blue-600"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-slate-900">Pedro Morales</p>
+                        <p class="text-xs text-slate-500">Monitor Staff</p>
+                    </div>
+                    <button onclick="logout()" class="text-slate-400 hover:text-red-600 transition">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Navigation -->
+            <div class="bg-white border-b border-slate-200 shadow-sm px-8 py-4 flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleSidebar()" class="text-slate-600 hover:text-slate-900 transition">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-900">Monitoring Record Details</h2>
+                        <p class="text-sm text-slate-600 mt-1">MON-002 · Shopee · Fashion Hub PH</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="relative text-slate-600 hover:text-slate-900">
+                        <i class="fas fa-bell text-lg"></i>
+                        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">2</span>
+                    </button>
+                    <button onclick="printRecord()" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 transition">
+                        <i class="fas fa-print mr-2"></i>Print
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="flex-1 overflow-auto">
+                <div class="p-8 max-w-4xl mx-auto">
+                    <!-- Status Bar -->
+                    <div class="bg-white border-l-4 border-blue-600 rounded-lg p-4 mb-6 flex items-center justify-between">
+                        <div>
+                            <h3 class="font-bold text-slate-900">Status: Evaluated</h3>
+                            <p class="text-sm text-slate-600 mt-1">Awaiting Validation · Assigned to Validator on Dec 10, 2025</p>
+                        </div>
+                        <span class="badge bg-blue-100 text-blue-800">
+                            <i class="fas fa-check-circle mr-1"></i>
+                            Evaluated
+                        </span>
+                    </div>
+
+                    <!-- Tabs -->
+                    <div class="bg-white border-b border-slate-200 mb-6">
+                        <div class="flex gap-0">
+                            <button class="tab-button active" onclick="switchTab(event, 'overview')">
+                                <i class="fas fa-info-circle mr-2"></i>Overview
+                            </button>
+                            <button class="tab-button" onclick="switchTab(event, 'product')">
+                                <i class="fas fa-box mr-2"></i>Product Details
+                            </button>
+                            <button class="tab-button" onclick="switchTab(event, 'evaluation')">
+                                <i class="fas fa-check mr-2"></i>Evaluation
+                            </button>
+                            <button class="tab-button" onclick="switchTab(event, 'history')">
+                                <i class="fas fa-history mr-2"></i>History
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Tab 1: Overview -->
+                    <div id="overview" class="tab-content active">
+                        <!-- Monitoring Information -->
+                        <div class="detail-card">
+                            <div class="detail-section-title">
+                                <i class="fas fa-calendar text-blue-600"></i>
+                                Monitoring Information
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-item">
+                                    <div class="detail-label">Monitoring ID</div>
+                                    <div class="detail-value font-mono">MON-002</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Date Monitored</div>
+                                    <div class="detail-value">December 12, 2025</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Platform</div>
+                                    <div class="detail-value">Shopee</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Monitored By</div>
+                                    <div class="detail-value">Pedro Morales</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Seller Information -->
+                        <div class="detail-card">
+                            <div class="detail-section-title">
+                                <i class="fas fa-store text-blue-600"></i>
+                                Seller Information
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-item">
+                                    <div class="detail-label">Company/Seller Name</div>
+                                    <div class="detail-value">Fashion Hub PH</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Address</div>
+                                    <div class="detail-value">Unit 205, Manila Business Center, Quezon City, NCR</div>
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-item">
+                                    <div class="detail-label">Region</div>
+                                    <div class="detail-value">National Capital Region</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">City/Municipality</div>
+                                    <div class="detail-value">Quezon City</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Barangay</div>
+                                    <div class="detail-value">Mandaluyong</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Timeline -->
+                        <div class="detail-card">
+                            <div class="detail-section-title">
+                                <i class="fas fa-timeline text-blue-600"></i>
+                                Record Timeline
+                            </div>
+                            <div class="space-y-4">
+                                <div class="flex gap-4">
+                                    <div class="flex flex-col items-center">
+                                        <div class="w-3 h-3 bg-green-500 rounded-full mt-1.5"></div>
+                                        <div class="w-0.5 h-12 bg-slate-200 mt-2"></div>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-slate-900">Created</p>
+                                        <p class="text-sm text-slate-600">December 12, 2025 at 2:30 PM</p>
+                                        <p class="text-xs text-slate-500 mt-1">By Pedro Morales</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-4">
+                                    <div class="flex flex-col items-center">
+                                        <div class="w-3 h-3 bg-blue-500 rounded-full mt-1.5"></div>
+                                        <div class="w-0.5 h-12 bg-slate-200 mt-2"></div>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-slate-900">Assigned for Evaluation</p>
+                                        <p class="text-sm text-slate-600">December 12, 2025 at 3:45 PM</p>
+                                        <p class="text-xs text-slate-500 mt-1">Assigned to Ana Garcia (Evaluator)</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-4">
+                                    <div class="flex flex-col items-center">
+                                        <div class="w-3 h-3 bg-purple-500 rounded-full mt-1.5"></div>
+                                    </div>
+                                    <div>
+                                        <p class="font-semibold text-slate-900">Evaluation Completed</p>
+                                        <p class="text-sm text-slate-600">December 13, 2025 at 10:15 AM</p>
+                                        <p class="text-xs text-slate-500 mt-1">Compliance Order (CO) Issued · DTS-PHI-2025-000287</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 2: Product Details -->
+                    <div id="product" class="tab-content">
+                        <div class="detail-card">
+                            <div class="detail-section-title">
+                                <i class="fas fa-box text-blue-600"></i>
+                                Product Information
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-item">
+                                    <div class="detail-label">Product Name</div>
+                                    <div class="detail-value">Nike Shoes Collection</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Brand/Logo</div>
+                                    <div class="detail-value">Nike</div>
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-item">
+                                    <div class="detail-label">Description</div>
+                                    <div class="detail-value">Branded footwear - authenticity uncertain. Seller claims original but no authentication marks visible.</div>
+                                </div>
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-item">
+                                    <div class="detail-label">Prohibited/Regulated</div>
+                                    <span class="badge bg-green-100 text-green-800 mt-1">
+                                        No
+                                    </span>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Fair Trade Laws Compliance</div>
+                                    <span class="badge bg-green-100 text-green-800 mt-1">
+                                        Compliant
+                                    </span>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Violation Type</div>
+                                    <span class="badge bg-orange-100 text-orange-800 mt-1">
+                                        Potentially Unauthorized
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detail-card">
+                            <div class="detail-section-title">
+                                <i class="fas fa-link text-blue-600"></i>
+                                Listing Information
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-item w-full">
+                                    <div class="detail-label">Product URL</div>
+                                    <a href="#" class="detail-value text-blue-600 hover:text-blue-800 break-all">https://shopee.ph/products/nike-shoes-collection-original</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detail-card">
+                            <div class="detail-section-title">
+                                <i class="fas fa-comment text-blue-600"></i>
+                                Remarks & Observations
+                            </div>
+                            <div class="bg-slate-50 rounded p-4 border-l-2 border-slate-400">
+                                <p class="text-slate-700">No visible authentication marks, seller has mixed reviews. Multiple listings from same seller with varying product quality. Recommend requesting proof of authenticity or marking as non-compliant with brand guidelines.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 3: Evaluation -->
+                    <div id="evaluation" class="tab-content">
+                        <div class="detail-card">
+                            <div class="detail-section-title">
+                                <i class="fas fa-check-circle text-blue-600"></i>
+                                Evaluation Details
+                            </div>
+                            <div class="detail-row">
+                                <div class="detail-item">
+                                    <div class="detail-label">Evaluator</div>
+                                    <div class="detail-value">Ana Garcia</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Evaluation Date</div>
+                                    <div class="detail-value">December 13, 2025</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Action Type</div>
+                                    <span class="badge bg-orange-100 text-orange-800 mt-1">
+                                        Compliance Order (CO)
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="detail-row">
+                                <div class="detail-item">
+                                    <div class="detail-label">DTS Number</div>
+                                    <div class="detail-value font-mono text-lg">DTS-PHI-2025-000287</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Action Status</div>
+                                    <span class="badge bg-blue-100 text-blue-800 mt-1">
+                                        Issued
+                                    </span>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Date of Action</div>
+                                    <div class="detail-value">December 13, 2025</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detail-card">
+                            <div class="detail-section-title">
+                                <i class="fas fa-file-alt text-blue-600"></i>
+                                Evaluation Remarks
+                            </div>
+                            <div class="bg-slate-50 rounded p-4 border-l-2 border-slate-400">
+                                <p class="text-slate-700 mb-3">The monitoring record indicates potential authenticity concerns with the Nike shoes being sold. Key findings:</p>
+                                <ul class="list-disc list-inside space-y-2 text-slate-700">
+                                    <li>Lack of visible authentication marks on product listings</li>
+                                    <li>Mixed seller reviews suggesting inconsistent product quality</li>
+                                    <li>No certificate of authenticity or warranty documentation visible</li>
+                                    <li>Prices significantly below recommended retail pricing</li>
+                                </ul>
+                                <p class="text-slate-700 mt-3">Recommendation: Issue Compliance Order requiring seller to provide proof of authorization from Nike or remove the listing within 48 hours.</p>
+                            </div>
+                        </div>
+
+                        <div class="detail-card">
+                            <div class="detail-section-title">
+                                <i class="fas fa-file-download text-blue-600"></i>
+                                Order Documents
+                            </div>
+                            <div class="flex items-center gap-3 p-4 border border-slate-200 rounded-lg hover:bg-slate-50 transition cursor-pointer">
+                                <i class="fas fa-file-pdf text-red-600 text-2xl"></i>
+                                <div class="flex-1">
+                                    <p class="font-semibold text-slate-900">Compliance_Order_DTS-PHI-2025-000287.pdf</p>
+                                    <p class="text-sm text-slate-600">4.2 MB · Created on Dec 13, 2025</p>
+                                </div>
+                                <button class="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700">Download</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab 4: History -->
+                    <div id="history" class="tab-content">
+                        <div class="detail-card">
+                            <div class="detail-section-title">
+                                <i class="fas fa-history text-blue-600"></i>
+                                Change History
+                            </div>
+                            <div class="space-y-4">
+                                <div class="border-l-4 border-slate-300 pl-4 py-2">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <p class="font-semibold text-slate-900">Record Submitted</p>
+                                            <p class="text-sm text-slate-600">December 12, 2025 at 2:30 PM</p>
+                                        </div>
+                                        <span class="badge bg-blue-100 text-blue-800">Created</span>
+                                    </div>
+                                </div>
+                                <div class="border-l-4 border-slate-300 pl-4 py-2">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <p class="font-semibold text-slate-900">Status Changed</p>
+                                            <p class="text-sm text-slate-600">December 12, 2025 at 3:45 PM</p>
+                                            <p class="text-xs text-slate-500 mt-1">From: Pending Evaluation → To: Awaiting Evaluation</p>
+                                        </div>
+                                        <span class="badge bg-blue-100 text-blue-800">Updated</span>
+                                    </div>
+                                </div>
+                                <div class="border-l-4 border-slate-300 pl-4 py-2">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <p class="font-semibold text-slate-900">Evaluation Completed</p>
+                                            <p class="text-sm text-slate-600">December 13, 2025 at 10:15 AM</p>
+                                            <p class="text-xs text-slate-500 mt-1">Evaluator: Ana Garcia · Action: Compliance Order (CO)</p>
+                                        </div>
+                                        <span class="badge bg-purple-100 text-purple-800">Evaluated</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex gap-4 mt-8 mb-8">
+                        <button onclick="history.back()" class="px-6 py-2 border border-slate-300 rounded-lg text-slate-700 font-medium hover:bg-slate-50 transition flex items-center gap-2">
+                            <i class="fas fa-arrow-left"></i>
+                            Back to Records
+                        </button>
+                        <button onclick="printRecord()" class="px-6 py-2 border border-slate-300 rounded-lg text-slate-700 font-medium hover:bg-slate-50 transition flex items-center gap-2">
+                            <i class="fas fa-print"></i>
+                            Print Record
+                        </button>
+                        <button onclick="exportPDF()" class="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition flex items-center gap-2">
+                            <i class="fas fa-file-pdf"></i>
+                            Export as PDF
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        function switchTab(event, tabName) {
+            event.preventDefault();
+            
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Deactivate all buttons
+            const buttons = document.querySelectorAll('.tab-button');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            event.target.closest('.tab-button').classList.add('active');
+        }
+
+        function printRecord() {
+            window.print();
+        }
+
+        function exportPDF() {
+            alert('Record exported as PDF: MON-002_Monitoring_Record.pdf');
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar.style.marginLeft === '-16rem') {
+                sidebar.style.marginLeft = '0';
+            } else {
+                sidebar.style.marginLeft = '-16rem';
+            }
+        }
+
+        function toggleSubmenu(button) {
+            const submenu = button.nextElementSibling;
+            const icon = button.querySelector('.icon-rotate');
+
+            if (submenu.classList.contains('hidden')) {
+                submenu.classList.remove('hidden');
+                icon.classList.add('rotated');
+            } else {
+                submenu.classList.add('hidden');
+                icon.classList.remove('rotated');
+            }
+        }
+
+        function logout() {
+            window.location.href = '../index.html';
+        }
+    </script>
+</body>
+</html>

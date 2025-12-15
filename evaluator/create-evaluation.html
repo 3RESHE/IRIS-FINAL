@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DTI Evaluation System - Create Evaluation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .sidebar-transition { transition: all 0.3s ease; }
+        .icon-rotate { transition: transform 0.3s ease; }
+        .icon-rotate.rotated { transform: rotate(180deg); }
+        .nav-link { transition: all 0.2s ease; }
+        .nav-link:hover { background-color: rgba(59, 130, 246, 0.1); padding-left: 1.5rem; }
+        .form-section { border: 1px solid #e2e8f0; border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 1.5rem; background-color: #ffffff; }
+        .form-section-title { font-size: 1rem; font-weight: 700; color: #1e293b; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        .required-field::after { content: " *"; color: #dc2626; }
+        .input-field { width: 100%; padding: 0.5rem 0.75rem; border: 1px solid #cbd5e1; border-radius: 0.375rem; font-size: 0.875rem; transition: border-color 0.2s; }
+        .input-field:focus { outline: none; border-color: #a855f7; box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1); }
+        .textarea-field { width: 100%; padding: 0.75rem; border: 1px solid #cbd5e1; border-radius: 0.375rem; font-size: 0.875rem; resize: vertical; min-height: 120px; }
+        .textarea-field:focus { outline: none; border-color: #a855f7; box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.1); }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div id="sidebar" class="w-64 bg-white border-r border-slate-200 shadow-sm sidebar-transition">
+            <div class="p-6 border-b border-slate-200">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-gavel text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold text-slate-900">DTI Evaluator</h1>
+                        <p class="text-xs text-slate-500">Evaluation Team</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="p-4 space-y-2">
+                <a href="dashboard.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-home w-5"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-inbox w-5"></i>
+                            <span>Evaluations</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate rotated w-4"></i>
+                    </button>
+                    <div class="submenu ml-8 space-y-1 mt-1">
+                        <a href="assigned-records.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-tasks w-4"></i>
+                            <span>Assigned Records</span>
+                        </a>
+                        <a href="create-evaluation.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm bg-purple-50 text-purple-600">
+                            <i class="fas fa-plus w-4"></i>
+                            <span>Create Evaluation</span>
+                        </a>
+                    </div>
+                </div>
+
+                <a href="issued-orders.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-file-contract w-5"></i>
+                    <span>Issued Orders</span>
+                </a>
+
+                <a href="validation-feedback.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-comments w-5"></i>
+                    <span>Validation Feedback</span>
+                </a>
+
+                <a href="evaluation-history.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-history w-5"></i>
+                    <span>History</span>
+                </a>
+
+            </nav>
+
+            <div class="absolute bottom-0 left-0 w-64 p-4 border-t border-slate-200 bg-white">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-purple-600"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-slate-900">Ana Garcia</p>
+                        <p class="text-xs text-slate-500">Evaluator</p>
+                    </div>
+                    <button onclick="logout()" class="text-slate-400 hover:text-red-600 transition">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Navigation -->
+            <div class="bg-white border-b border-slate-200 shadow-sm px-8 py-4 flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleSidebar()" class="text-slate-600 hover:text-slate-900 transition">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h2 class="text-2xl font-bold text-slate-900">Create Evaluation</h2>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="flex-1 overflow-auto">
+                <div class="p-8 max-w-4xl mx-auto">
+                    <!-- Monitoring Info Card -->
+                    <div class="bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg border border-purple-200 p-6 mb-8">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <div>
+                                <p class="text-xs text-purple-600 font-medium mb-1">Monitoring ID</p>
+                                <p class="font-bold text-slate-900" id="monId">MON-001</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-purple-600 font-medium mb-1">Seller</p>
+                                <p class="font-bold text-slate-900" id="seller">TechShop PH</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-purple-600 font-medium mb-1">Platform</p>
+                                <p class="font-bold text-slate-900" id="platform">Lazada</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-purple-600 font-medium mb-1">Product</p>
+                                <p class="font-bold text-slate-900 truncate" id="product">Fake AirPods Pro</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Evaluation Form -->
+                    <form id="evaluationForm">
+                        <!-- Action Determination -->
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <i class="fas fa-gavel text-purple-600"></i>
+                                Action Determination
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2 required-field">Action Type</label>
+                                    <select id="actionType" class="input-field" onchange="updateActionInfo()">
+                                        <option value="">Select Action</option>
+                                        <option value="tdo">Takedown Order (TDO) - Remove Product</option>
+                                        <option value="co">Compliance Order (CO) - Make Compliant</option>
+                                        <option value="no-action">No Action - Record Closes</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2 required-field">Compliance Deadline</label>
+                                    <select id="deadline" class="input-field">
+                                        <option value="">Select Deadline</option>
+                                        <option value="24h">24 Hours</option>
+                                        <option value="48h" selected>48 Hours (Standard)</option>
+                                        <option value="72h">72 Hours</option>
+                                        <option value="7d">7 Days</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2 required-field">Evaluation Remarks & Justification</label>
+                                <textarea id="evaluationRemarks" class="textarea-field" placeholder="Provide detailed reasoning for this action decision..."></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Order Content -->
+                        <div class="form-section" id="orderSection" style="display: none;">
+                            <div class="form-section-title">
+                                <i class="fas fa-file-contract text-purple-600"></i>
+                                Order Content
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">Order Message</label>
+                                <textarea id="orderContent" class="textarea-field" placeholder="Draft the order message to be sent to the seller..."></textarea>
+                            </div>
+                            <div class="mt-4 p-4 bg-purple-50 border border-purple-200 rounded-lg">
+                                <p class="text-sm text-purple-900">
+                                    <i class="fas fa-info-circle mr-2"></i>
+                                    DTS Number will be auto-generated upon submission. The order will be formatted and attached as a PDF.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Evidence & Documentation -->
+                        <div class="form-section">
+                            <div class="form-section-title">
+                                <i class="fas fa-file-upload text-purple-600"></i>
+                                Evidence & Documentation
+                            </div>
+                            <div class="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center cursor-pointer hover:bg-slate-50 transition">
+                                <i class="fas fa-cloud-upload-alt text-2xl text-slate-400 mb-2"></i>
+                                <p class="text-sm font-medium text-slate-700">Upload supporting documents</p>
+                                <p class="text-xs text-slate-600 mt-1">Screenshots, proof of violation, reference links</p>
+                                <input type="file" id="evidence" multiple class="hidden">
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex justify-between gap-4 mt-8 mb-8">
+                            <button type="button" onclick="goBack()" class="px-6 py-2 border border-slate-300 rounded-lg text-slate-700 font-medium hover:bg-slate-50 transition flex items-center gap-2">
+                                <i class="fas fa-arrow-left"></i>
+                                Back
+                            </button>
+                            <div class="flex gap-4">
+                                <button type="button" onclick="saveDraft()" class="px-6 py-2 border border-orange-300 text-orange-600 rounded-lg font-medium hover:bg-orange-50 transition flex items-center gap-2">
+                                    <i class="fas fa-save"></i>
+                                    Save Draft
+                                </button>
+                                <button type="button" onclick="submitEvaluation()" class="px-6 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition flex items-center gap-2">
+                                    <i class="fas fa-check"></i>
+                                    Submit Evaluation
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Success Message -->
+                        <div id="successMessage" class="hidden bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
+                            <div class="flex items-start gap-3">
+                                <i class="fas fa-check-circle text-green-600 text-xl mt-0.5"></i>
+                                <div>
+                                    <h4 class="font-bold text-green-900">Evaluation Submitted Successfully!</h4>
+                                    <p class="text-sm text-green-800 mt-1">DTS Number: <span id="dtsNumber" class="font-mono font-bold"></span></p>
+                                    <div class="flex gap-2 mt-3">
+                                        <button onclick="window.location.href='issued-orders.html'" class="text-sm px-4 py-1 bg-green-600 text-white rounded hover:bg-green-700">
+                                            View Order
+                                        </button>
+                                        <button onclick="window.location.href='assigned-records.html'" class="text-sm px-4 py-1 bg-green-100 text-green-800 rounded hover:bg-green-200">
+                                            Back to Records
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const allRecords = {
+            'MON-001': { seller: 'TechShop PH', platform: 'Lazada', product: 'Fake AirPods Pro' },
+            'MON-002': { seller: 'Fashion Hub PH', platform: 'Shopee', product: 'Nike Shoes Collection' },
+            'MON-003': { seller: 'Gray Market Electronics', platform: 'Facebook', product: 'Unauthorized Electronics' },
+            'MON-005': { seller: 'Smart Seller Shop', platform: 'TikTok', product: 'Designer Bags' }
+        };
+
+        function loadMonitoringRecord() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const recordId = urlParams.get('id') || 'MON-001';
+            const record = allRecords[recordId];
+
+            if (record) {
+                document.getElementById('monId').textContent = recordId;
+                document.getElementById('seller').textContent = record.seller;
+                document.getElementById('platform').textContent = record.platform;
+                document.getElementById('product').textContent = record.product;
+            }
+        }
+
+        function updateActionInfo() {
+            const actionType = document.getElementById('actionType').value;
+            const orderSection = document.getElementById('orderSection');
+            
+            if (actionType !== 'no-action' && actionType !== '') {
+                orderSection.style.display = 'block';
+            } else {
+                orderSection.style.display = 'none';
+            }
+        }
+
+        function submitEvaluation() {
+            const form = document.getElementById('evaluationForm');
+            const violation = document.getElementById('violationConfirmed').value;
+            const category = document.getElementById('violationCategory').value;
+            const actionType = document.getElementById('actionType').value;
+            const remarks = document.getElementById('evaluationRemarks').value;
+
+            if (!violation || !category || !actionType || !remarks) {
+                alert('Please fill all required fields');
+                return;
+            }
+
+            const dtsNo = 'DTS-PHI-2025-' + String(Math.floor(Math.random() * 10000) + 100000).substring(0, 6);
+            
+            document.getElementById('dtsNumber').textContent = dtsNo;
+            document.getElementById('successMessage').classList.remove('hidden');
+            form.style.display = 'none';
+        }
+
+        function saveDraft() {
+            alert('Evaluation saved as draft. You can continue editing later.');
+        }
+
+        function goBack() {
+            window.location.href = 'assigned-records.html';
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar.style.marginLeft === '-16rem') {
+                sidebar.style.marginLeft = '0';
+            } else {
+                sidebar.style.marginLeft = '-16rem';
+            }
+        }
+
+        function toggleSubmenu(button) {
+            const submenu = button.nextElementSibling;
+            const icon = button.querySelector('.icon-rotate');
+
+            if (submenu.classList.contains('hidden')) {
+                submenu.classList.remove('hidden');
+                icon.classList.add('rotated');
+            } else {
+                submenu.classList.add('hidden');
+                icon.classList.remove('rotated');
+            }
+        }
+
+        function logout() {
+            window.location.href = '../index.html';
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', loadMonitoringRecord);
+    </script>
+</body>
+</html>

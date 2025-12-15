@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DTI Evaluation System - Evaluation History</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .sidebar-transition { transition: all 0.3s ease; }
+        .icon-rotate { transition: transform 0.3s ease; }
+        .icon-rotate.rotated { transform: rotate(180deg); }
+        .nav-link { transition: all 0.2s ease; }
+        .nav-link:hover { background-color: rgba(59, 130, 246, 0.1); padding-left: 1.5rem; }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div id="sidebar" class="w-64 bg-white border-r border-slate-200 shadow-sm sidebar-transition">
+            <div class="p-6 border-b border-slate-200">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-gavel text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold text-slate-900">DTI Evaluator</h1>
+                        <p class="text-xs text-slate-500">Evaluation Team</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="p-4 space-y-2">
+                <a href="dashboard.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-home w-5"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-inbox w-5"></i>
+                            <span>Evaluations</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate rotated w-4"></i>
+                    </button>
+                    <div class="submenu ml-8 space-y-1 mt-1">
+                        <a href="assigned-records.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-tasks w-4"></i>
+                            <span>Assigned Records</span>
+                        </a>
+                        <a href="create-evaluation.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-plus w-4"></i>
+                            <span>Create Evaluation</span>
+                        </a>
+                    </div>
+                </div>
+
+                <a href="issued-orders.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-file-contract w-5"></i>
+                    <span>Issued Orders</span>
+                </a>
+
+                <a href="validation-feedback.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-comments w-5"></i>
+                    <span>Validation Feedback</span>
+                </a>
+
+                <a href="evaluation-history.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50 bg-purple-50 text-purple-600">
+                    <i class="fas fa-history w-5"></i>
+                    <span>History</span>
+                </a>
+
+            </nav>
+
+            <div class="absolute bottom-0 left-0 w-64 p-4 border-t border-slate-200 bg-white">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-purple-600"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-slate-900">Ana Garcia</p>
+                        <p class="text-xs text-slate-500">Evaluator</p>
+                    </div>
+                    <button onclick="logout()" class="text-slate-400 hover:text-red-600 transition">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Navigation -->
+            <div class="bg-white border-b border-slate-200 shadow-sm px-8 py-4 flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleSidebar()" class="text-slate-600 hover:text-slate-900 transition">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h2 class="text-2xl font-bold text-slate-900">Evaluation History</h2>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="flex-1 overflow-auto">
+                <div class="p-8">
+                    <!-- Stats -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <p class="text-slate-600 text-sm font-medium mb-2">Total Evaluations</p>
+                            <p class="text-3xl font-bold text-purple-600">34</p>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <p class="text-slate-600 text-sm font-medium mb-2">This Month</p>
+                            <p class="text-3xl font-bold text-blue-600">34</p>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <p class="text-slate-600 text-sm font-medium mb-2">Avg. Time</p>
+                            <p class="text-3xl font-bold text-orange-600">1.5h</p>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <p class="text-slate-600 text-sm font-medium mb-2">Accuracy</p>
+                            <p class="text-3xl font-bold text-green-600">89%</p>
+                        </div>
+                    </div>
+
+                    <!-- Timeline -->
+                    <div class="max-w-4xl">
+                        <h3 class="text-lg font-bold text-slate-900 mb-6">Evaluation Timeline</h3>
+                        <div class="space-y-4">
+                            <div class="flex gap-4">
+                                <div class="flex flex-col items-center">
+                                    <div class="w-4 h-4 bg-purple-600 rounded-full mt-1.5"></div>
+                                    <div class="w-0.5 h-16 bg-slate-200 mt-2"></div>
+                                </div>
+                                <div class="flex-1 bg-white rounded-lg p-4 border border-slate-200">
+                                    <div class="flex items-start justify-between mb-2">
+                                        <div>
+                                            <h4 class="font-bold text-slate-900">MON-002 Evaluated</h4>
+                                            <p class="text-sm text-slate-600">Fashion Hub PH · Compliance Order Issued</p>
+                                        </div>
+                                        <span class="text-xs text-slate-500">Dec 13, 2:15 PM</span>
+                                    </div>
+                                    <p class="text-sm text-slate-700">DTS Number: DTS-PHI-2025-000287</p>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-4">
+                                <div class="flex flex-col items-center">
+                                    <div class="w-4 h-4 bg-purple-600 rounded-full mt-1.5"></div>
+                                    <div class="w-0.5 h-16 bg-slate-200 mt-2"></div>
+                                </div>
+                                <div class="flex-1 bg-white rounded-lg p-4 border border-slate-200">
+                                    <div class="flex items-start justify-between mb-2">
+                                        <div>
+                                            <h4 class="font-bold text-slate-900">MON-001 Evaluated</h4>
+                                            <p class="text-sm text-slate-600">TechShop PH · Takedown Order Issued</p>
+                                        </div>
+                                        <span class="text-xs text-slate-500">Dec 13, 1:45 PM</span>
+                                    </div>
+                                    <p class="text-sm text-slate-700">DTS Number: DTS-PHI-2025-000286</p>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-4">
+                                <div class="flex flex-col items-center">
+                                    <div class="w-4 h-4 bg-purple-600 rounded-full mt-1.5"></div>
+                                    <div class="w-0.5 h-16 bg-slate-200 mt-2"></div>
+                                </div>
+                                <div class="flex-1 bg-white rounded-lg p-4 border border-slate-200">
+                                    <div class="flex items-start justify-between mb-2">
+                                        <div>
+                                            <h4 class="font-bold text-slate-900">MON-003 Evaluated</h4>
+                                            <p class="text-sm text-slate-600">Gray Market Electronics · Takedown Order Issued</p>
+                                        </div>
+                                        <span class="text-xs text-slate-500">Dec 12, 3:20 PM</span>
+                                    </div>
+                                    <p class="text-sm text-slate-700">DTS Number: DTS-PHI-2025-000285</p>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-4">
+                                <div class="flex flex-col items-center">
+                                    <div class="w-4 h-4 bg-purple-600 rounded-full mt-1.5"></div>
+                                    <div class="w-0.5 h-16 bg-slate-200 mt-2"></div>
+                                </div>
+                                <div class="flex-1 bg-white rounded-lg p-4 border border-slate-200">
+                                    <div class="flex items-start justify-between mb-2">
+                                        <div>
+                                            <h4 class="font-bold text-slate-900">MON-005 Evaluated</h4>
+                                            <p class="text-sm text-slate-600">Smart Seller Shop · Takedown Order Issued</p>
+                                        </div>
+                                        <span class="text-xs text-slate-500">Dec 12, 2:30 PM</span>
+                                    </div>
+                                    <p class="text-sm text-slate-700">DTS Number: DTS-PHI-2025-000284</p>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-4">
+                                <div class="flex flex-col items-center">
+                                    <div class="w-4 h-4 bg-purple-600 rounded-full mt-1.5"></div>
+                                </div>
+                                <div class="flex-1 bg-white rounded-lg p-4 border border-slate-200">
+                                    <div class="flex items-start justify-between mb-2">
+                                        <div>
+                                            <h4 class="font-bold text-slate-900">Started Evaluating Records</h4>
+                                            <p class="text-sm text-slate-600">Initial assignment received</p>
+                                        </div>
+                                        <span class="text-xs text-slate-500">Dec 10, 9:00 AM</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar.style.marginLeft === '-16rem') {
+                sidebar.style.marginLeft = '0';
+            } else {
+                sidebar.style.marginLeft = '-16rem';
+            }
+        }
+
+        function toggleSubmenu(button) {
+            const submenu = button.nextElementSibling;
+            const icon = button.querySelector('.icon-rotate');
+
+            if (submenu.classList.contains('hidden')) {
+                submenu.classList.remove('hidden');
+                icon.classList.add('rotated');
+            } else {
+                submenu.classList.add('hidden');
+                icon.classList.remove('rotated');
+            }
+        }
+
+        function logout() {
+            window.location.href = '../index.html';
+        }
+    </script>
+</body>
+</html>

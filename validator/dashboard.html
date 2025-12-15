@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DTI Validation System - Validator Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .sidebar-transition { transition: all 0.3s ease; }
+        .icon-rotate { transition: transform 0.3s ease; }
+        .icon-rotate.rotated { transform: rotate(180deg); }
+        .nav-link { transition: all 0.2s ease; }
+        .nav-link:hover { background-color: rgba(59, 130, 246, 0.1); padding-left: 1.5rem; }
+        .nav-link.active { background-color: rgb(59, 130, 246); color: white; border-left: 4px solid white; }
+        .stat-card { transition: all 0.2s ease; }
+        .stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div id="sidebar" class="w-64 bg-white border-r border-slate-200 shadow-sm sidebar-transition">
+            <div class="p-6 border-b border-slate-200">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-clipboard-check text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold text-slate-900">DTI Validator</h1>
+                        <p class="text-xs text-slate-500">Verification Team</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="p-4 space-y-2">
+                <a href="dashboard.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50 bg-green-50 text-green-600">
+                    <i class="fas fa-home w-5"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-tasks w-5"></i>
+                            <span>Validations</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate rotated w-4"></i>
+                    </button>
+                    <div class="submenu ml-8 space-y-1 mt-1">
+                        <a href="pending-validations.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-hourglass-half w-4"></i>
+                            <span>Pending Validations</span>
+                        </a>
+                        <a href="create-validation.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-check-double w-4"></i>
+                            <span>Create Validation</span>
+                        </a>
+                    </div>
+                </div>
+
+                <a href="validation-history.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-history w-5"></i>
+                    <span>History</span>
+                </a>
+
+                <a href="validation-reports.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-chart-bar w-5"></i>
+                    <span>Reports</span>
+                </a>
+
+            </nav>
+
+            <div class="absolute bottom-0 left-0 w-64 p-4 border-t border-slate-200 bg-white">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-green-600"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-slate-900">Maria Santos</p>
+                        <p class="text-xs text-slate-500">Validator</p>
+                    </div>
+                    <button onclick="logout()" class="text-slate-400 hover:text-red-600 transition">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Navigation -->
+            <div class="bg-white border-b border-slate-200 shadow-sm px-8 py-4 flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleSidebar()" class="text-slate-600 hover:text-slate-900 transition">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h2 class="text-2xl font-bold text-slate-900">Validator Dashboard</h2>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <button class="relative text-slate-600 hover:text-slate-900">
+                        <i class="fas fa-bell text-lg"></i>
+                        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">4</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="flex-1 overflow-auto">
+                <div class="p-8">
+                    <!-- Welcome Card -->
+                    <div class="bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg shadow-lg p-6 mb-8 text-white">
+                        <h3 class="text-2xl font-bold mb-2">Welcome, Maria Santos</h3>
+                        <p class="text-green-100">You have 6 pending validations. 3 are due today. Please verify compliance status immediately.</p>
+                    </div>
+
+                    <!-- Key Metrics -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                        <div class="stat-card bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-slate-600 text-sm font-medium">Pending Validations</p>
+                                <i class="fas fa-hourglass-half text-green-600 text-xl"></i>
+                            </div>
+                            <p class="text-3xl font-bold text-green-600">6</p>
+                            <p class="text-xs text-orange-600 mt-2"><i class="fas fa-exclamation-circle mr-1"></i>3 due today</p>
+                        </div>
+
+                        <div class="stat-card bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-slate-600 text-sm font-medium">Validations Completed</p>
+                                <i class="fas fa-check-circle text-green-600 text-xl"></i>
+                            </div>
+                            <p class="text-3xl font-bold text-green-600">42</p>
+                            <p class="text-xs text-slate-500 mt-2">This month</p>
+                        </div>
+
+                        <div class="stat-card bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-slate-600 text-sm font-medium">Compliance Rate</p>
+                                <i class="fas fa-chart-pie text-green-600 text-xl"></i>
+                            </div>
+                            <p class="text-3xl font-bold text-green-600">88%</p>
+                            <p class="text-xs text-slate-500 mt-2">Sellers complying</p>
+                        </div>
+
+                        <div class="stat-card bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <p class="text-slate-600 text-sm font-medium">Avg. Time</p>
+                                <i class="fas fa-clock text-green-600 text-xl"></i>
+                            </div>
+                            <p class="text-3xl font-bold text-green-600">2.3h</p>
+                            <p class="text-xs text-slate-500 mt-2">Per validation</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                        <!-- Pending Tasks -->
+                        <div class="lg:col-span-2 bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-bold text-slate-900">Urgent Validations</h3>
+                                <a href="pending-validations.html" class="text-sm text-green-600 hover:text-green-800">View All</a>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="flex items-center gap-4 p-4 border border-red-200 bg-red-50 rounded-lg">
+                                    <div class="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-exclamation text-red-600"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-semibold text-slate-900">DTS-PHI-2025-000287</p>
+                                        <p class="text-xs text-slate-600">MON-002 · Compliance Order · Due TODAY at 2:30 PM</p>
+                                    </div>
+                                    <button onclick="window.location.href='create-validation.html?dts=DTS-PHI-2025-000287'" class="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700">
+                                        Validate
+                                    </button>
+                                </div>
+
+                                <div class="flex items-center gap-4 p-4 border border-orange-200 bg-orange-50 rounded-lg">
+                                    <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-clock text-orange-600"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-semibold text-slate-900">DTS-PHI-2025-000286</p>
+                                        <p class="text-xs text-slate-600">MON-001 · Takedown Order · Due TODAY at 6:00 PM</p>
+                                    </div>
+                                    <button onclick="window.location.href='create-validation.html?dts=DTS-PHI-2025-000286'" class="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700">
+                                        Validate
+                                    </button>
+                                </div>
+
+                                <div class="flex items-center gap-4 p-4 border border-orange-200 bg-orange-50 rounded-lg">
+                                    <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <i class="fas fa-clock text-orange-600"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="font-semibold text-slate-900">DTS-PHI-2025-000285</p>
+                                        <p class="text-xs text-slate-600">MON-003 · Takedown Order · Due TODAY at 8:00 PM</p>
+                                    </div>
+                                    <button onclick="window.location.href='create-validation.html?dts=DTS-PHI-2025-000285'" class="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-700">
+                                        Validate
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Performance -->
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+                            <h3 class="text-lg font-bold text-slate-900 mb-4">Performance</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-sm text-slate-700">Validation Rate</span>
+                                        <span class="text-sm font-bold">96%</span>
+                                    </div>
+                                    <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                                        <div class="h-full bg-green-500" style="width: 96%"></div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-sm text-slate-700">Accuracy</span>
+                                        <span class="text-sm font-bold">91%</span>
+                                    </div>
+                                    <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                                        <div class="h-full bg-green-500" style="width: 91%"></div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-sm text-slate-700">SLA Compliance</span>
+                                        <span class="text-sm font-bold">85%</span>
+                                    </div>
+                                    <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                                        <div class="h-full bg-orange-500" style="width: 85%"></div>
+                                    </div>
+                                </div>
+
+                                <div class="mt-4 p-3 bg-green-50 rounded-lg border border-green-200">
+                                    <p class="text-xs text-green-900">
+                                        <i class="fas fa-info-circle mr-1"></i>
+                                        You're performing well. Keep up the good work!
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex gap-4">
+                        <button onclick="window.location.href='pending-validations.html'" class="flex items-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition">
+                            <i class="fas fa-tasks"></i>
+                            View All Pending
+                        </button>
+                        <button onclick="window.location.href='create-validation.html'" class="flex items-center gap-2 px-6 py-3 border border-green-600 text-green-600 hover:bg-green-50 rounded-lg transition">
+                            <i class="fas fa-check-double"></i>
+                            Start Validation
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar.style.marginLeft === '-16rem') {
+                sidebar.style.marginLeft = '0';
+            } else {
+                sidebar.style.marginLeft = '-16rem';
+            }
+        }
+
+        function toggleSubmenu(button) {
+            const submenu = button.nextElementSibling;
+            const icon = button.querySelector('.icon-rotate');
+
+            if (submenu.classList.contains('hidden')) {
+                submenu.classList.remove('hidden');
+                icon.classList.add('rotated');
+            } else {
+                submenu.classList.add('hidden');
+                icon.classList.remove('rotated');
+            }
+        }
+
+        function logout() {
+            window.location.href = '../index.html';
+        }
+    </script>
+</body>
+</html>

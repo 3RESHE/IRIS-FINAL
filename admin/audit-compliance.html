@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DTI Monitoring System - Audit Log</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .sidebar-transition {
+            transition: all 0.3s ease;
+        }
+        .icon-rotate {
+            transition: transform 0.3s ease;
+        }
+        .icon-rotate.rotated {
+            transform: rotate(180deg);
+        }
+        .nav-link {
+            transition: all 0.2s ease;
+        }
+        .nav-link:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+            padding-left: 1.5rem;
+        }
+        .nav-link.active {
+            background-color: rgb(59, 130, 246);
+            color: white;
+            border-left: 4px solid white;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.show {
+            display: flex;
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div id="sidebar" class="w-64 bg-white border-r border-slate-200 shadow-sm sidebar-transition">
+            <div class="p-6 border-b border-slate-200">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold text-slate-900">DTI Monitor</h1>
+                        <p class="text-xs text-slate-500">Admin Panel</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Menu -->
+            <nav class="p-4 space-y-2">
+                <!-- Dashboard -->
+                <a href="dashboard.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-home w-5"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <!-- Monitoring -->
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-eye w-5"></i>
+                            <span>Monitoring</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate w-4"></i>
+                    </button>
+                    <div class="hidden submenu ml-8 space-y-1 mt-1">
+                        <a href="monitoring-records.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-list w-4"></i>
+                            <span>Records</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Assignments -->
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-tasks w-5"></i>
+                            <span>Assignments</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate w-4"></i>
+                    </button>
+                    <div class="hidden submenu ml-8 space-y-1 mt-1">
+                        <a href="assignment-management.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-list w-4"></i>
+                            <span>All Assignments</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Evaluations -->
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-check-circle w-5"></i>
+                            <span>Evaluations</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate w-4"></i>
+                    </button>
+                    <div class="hidden submenu ml-8 space-y-1 mt-1">
+                        <a href="evaluation-records.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-list w-4"></i>
+                            <span>Records</span>
+                        </a>
+                        <a href="issued-orders.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-file-alt w-4"></i>
+                            <span>Orders</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Validations -->
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-clipboard-check w-5"></i>
+                            <span>Validations</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate w-4"></i>
+                    </button>
+                    <div class="hidden submenu ml-8 space-y-1 mt-1">
+                        <a href="validation-records.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-list w-4"></i>
+                            <span>All Records</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Escalations -->
+                <a href="escalation-management.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-exclamation-circle w-5"></i>
+                    <span>Escalations</span>
+                </a>
+
+                <!-- Reports -->
+                <a href="reporting-analytics.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-chart-bar w-5"></i>
+                    <span>Reports</span>
+                </a>
+
+                <!-- Divider -->
+                <div class="my-4 border-t border-slate-200"></div>
+
+                <!-- Configuration -->
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-cog w-5"></i>
+                            <span>Configuration</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate rotated w-4"></i>
+                    </button>
+                    <div class="submenu ml-8 space-y-1 mt-1">
+                        <a href="user-management.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-users w-4"></i>
+                            <span>Users</span>
+                        </a>
+                        <a href="geographic-management.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-map-marker-alt w-4"></i>
+                            <span>Geographic</span>
+                        </a>
+                        <a href="platform-management.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-store w-4"></i>
+                            <span>Platforms</span>
+                        </a>
+                                      <a
+                href="category-management.html"
+                class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm"
+              >
+                <i class="fas fa-tag w-4"></i>
+                <span>Categories</span>
+              </a>
+                        <a href="audit-compliance.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm bg-blue-50 text-blue-600">
+                            <i class="fas fa-history w-4"></i>
+                            <span>Audit Log</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- User Profile -->
+            <div class="absolute bottom-0 left-0 w-64 p-4 border-t border-slate-200 bg-white">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-blue-600"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-slate-900">Admin User</p>
+                        <p class="text-xs text-slate-500">Administrator</p>
+                    </div>
+                    <button onclick="logout()" class="text-slate-400 hover:text-red-600 transition">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Navigation Bar -->
+            <div class="bg-white border-b border-slate-200 shadow-sm px-8 py-4 flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleSidebar()" class="text-slate-600 hover:text-slate-900 transition">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h2 class="text-2xl font-bold text-slate-900">Audit Log</h2>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <button class="relative text-slate-600 hover:text-slate-900">
+                        <i class="fas fa-bell text-lg"></i>
+                        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">2</span>
+                    </button>
+                    <button class="text-slate-600 hover:text-slate-900">
+                        <i class="fas fa-download text-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="flex-1 overflow-auto">
+                <div class="p-8">
+                    <!-- Quick Stats -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <p class="text-slate-600 text-sm font-medium mb-2">Total Activities</p>
+                            <p class="text-3xl font-bold text-slate-900">3,847</p>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <p class="text-slate-600 text-sm font-medium mb-2">This Month</p>
+                            <p class="text-3xl font-bold text-blue-600">842</p>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <p class="text-slate-600 text-sm font-medium mb-2">Critical Events</p>
+                            <p class="text-3xl font-bold text-red-600">12</p>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <p class="text-slate-600 text-sm font-medium mb-2">Failed Logins</p>
+                            <p class="text-3xl font-bold text-orange-600">8</p>
+                        </div>
+                    </div>
+
+                    <!-- Filters Section -->
+                    <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-6">
+                        <h3 class="text-lg font-bold text-slate-900 mb-4">Filters</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                            <!-- User Filter -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">User</label>
+                                <select id="userFilter" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">All Users</option>
+                                    <option value="maria.santos">Maria Santos</option>
+                                    <option value="juan.delacruz">Juan Dela Cruz</option>
+                                    <option value="ana.garcia">Ana Garcia</option>
+                                    <option value="pedro.morales">Pedro Morales</option>
+                                </select>
+                            </div>
+
+                            <!-- Action Type Filter -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">Action Type</label>
+                                <select id="actionFilter" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">All Actions</option>
+                                    <option value="login">Login</option>
+                                    <option value="create">Create</option>
+                                    <option value="update">Update</option>
+                                    <option value="delete">Delete</option>
+                                    <option value="export">Export</option>
+                                </select>
+                            </div>
+
+                            <!-- Date Range -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">From Date</label>
+                                <input type="date" id="fromDate" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" value="2025-12-01">
+                            </div>
+
+                            <!-- To Date -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">To Date</label>
+                                <input type="date" id="toDate" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" value="2025-12-12">
+                            </div>
+
+                            <!-- Filter Button -->
+                            <div class="flex items-end">
+                                <button onclick="filterLogs()" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition text-sm">
+                                    <i class="fas fa-search mr-2"></i>Filter
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Audit Logs Table -->
+                    <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold text-slate-900">Activity Logs</h3>
+                            <button onclick="exportLogs()" class="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition text-sm">
+                                <i class="fas fa-download"></i>
+                                <span>Export CSV</span>
+                            </button>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="border-b border-slate-200">
+                                        <th class="text-left py-3 px-4 font-medium text-slate-700">Timestamp</th>
+                                        <th class="text-left py-3 px-4 font-medium text-slate-700">User</th>
+                                        <th class="text-left py-3 px-4 font-medium text-slate-700">Action</th>
+                                        <th class="text-left py-3 px-4 font-medium text-slate-700">Module</th>
+                                        <th class="text-left py-3 px-4 font-medium text-slate-700">Details</th>
+                                        <th class="text-left py-3 px-4 font-medium text-slate-700">IP Address</th>
+                                        <th class="text-left py-3 px-4 font-medium text-slate-700">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="logsTable">
+                                    <!-- Logs populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Summary Section -->
+                    <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mt-6">
+                        <h3 class="text-lg font-bold text-slate-900 mb-4">Activity Summary by Type</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4">
+                            <div class="text-center p-4 bg-blue-50 rounded-lg">
+                                <p class="text-3xl font-bold text-blue-600">1,247</p>
+                                <p class="text-sm text-slate-600 mt-1">Logins</p>
+                            </div>
+                            <div class="text-center p-4 bg-green-50 rounded-lg">
+                                <p class="text-3xl font-bold text-green-600">892</p>
+                                <p class="text-sm text-slate-600 mt-1">Creates</p>
+                            </div>
+                            <div class="text-center p-4 bg-orange-50 rounded-lg">
+                                <p class="text-3xl font-bold text-orange-600">756</p>
+                                <p class="text-sm text-slate-600 mt-1">Updates</p>
+                            </div>
+                            <div class="text-center p-4 bg-red-50 rounded-lg">
+                                <p class="text-3xl font-bold text-red-600">234</p>
+                                <p class="text-sm text-slate-600 mt-1">Deletes</p>
+                            </div>
+                            <div class="text-center p-4 bg-purple-50 rounded-lg">
+                                <p class="text-3xl font-bold text-purple-600">542</p>
+                                <p class="text-sm text-slate-600 mt-1">Exports</p>
+                            </div>
+                            <div class="text-center p-4 bg-slate-100 rounded-lg">
+                                <p class="text-3xl font-bold text-slate-600">176</p>
+                                <p class="text-sm text-slate-600 mt-1">Others</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Log Details Modal -->
+    <div id="logDetailsModal" class="modal">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl mx-4 max-h-screen overflow-auto">
+            <div class="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+                <h3 class="text-xl font-bold text-slate-900">Activity Details</h3>
+                <button onclick="closeModal('logDetailsModal')" class="text-slate-400 hover:text-slate-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6" id="logDetailsContent"></div>
+            <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex justify-end">
+                <button onclick="closeModal('logDetailsModal')" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample audit log data
+        const auditLogs = [
+            { id: 'LOG-001', timestamp: '2025-12-12 14:32:15', user: 'maria.santos', action: 'login', module: 'Authentication', details: 'Successful login', ipAddress: '192.168.1.100', status: 'success' },
+            { id: 'LOG-002', timestamp: '2025-12-12 14:15:42', user: 'juan.delacruz', action: 'create', module: 'Monitoring', details: 'Created record MON-1847', ipAddress: '192.168.1.105', status: 'success' },
+            { id: 'LOG-003', timestamp: '2025-12-12 13:48:20', user: 'ana.garcia', action: 'update', module: 'Evaluation', details: 'Updated evaluation EVL-542', ipAddress: '192.168.1.112', status: 'success' },
+            { id: 'LOG-004', timestamp: '2025-12-12 13:22:10', user: 'pedro.morales', action: 'delete', module: 'Validation', details: 'Deleted record VAL-890', ipAddress: '192.168.1.108', status: 'warning' },
+            { id: 'LOG-005', timestamp: '2025-12-12 12:55:33', user: 'maria.santos', action: 'export', module: 'Reports', details: 'Exported monitoring data (CSV)', ipAddress: '192.168.1.100', status: 'success' },
+            { id: 'LOG-006', timestamp: '2025-12-12 12:30:18', user: 'juan.delacruz', action: 'login', module: 'Authentication', details: 'Failed login attempt', ipAddress: '192.168.1.115', status: 'danger' },
+            { id: 'LOG-007', timestamp: '2025-12-12 11:45:05', user: 'ana.garcia', action: 'create', module: 'Assignment', details: 'Created assignment ASN-234', ipAddress: '192.168.1.112', status: 'success' },
+            { id: 'LOG-008', timestamp: '2025-12-12 11:12:42', user: 'pedro.morales', action: 'update', module: 'User Management', details: 'Updated user profile USR-007', ipAddress: '192.168.1.108', status: 'success' },
+            { id: 'LOG-009', timestamp: '2025-12-12 10:33:15', user: 'maria.santos', action: 'login', module: 'Authentication', details: 'Successful login', ipAddress: '192.168.1.100', status: 'success' },
+            { id: 'LOG-010', timestamp: '2025-12-12 09:48:28', user: 'rosa.gonzales', action: 'export', module: 'Reports', details: 'Exported evaluation data', ipAddress: '192.168.1.120', status: 'success' },
+            { id: 'LOG-011', timestamp: '2025-12-11 16:25:40', user: 'juan.delacruz', action: 'delete', module: 'Configuration', details: 'Deleted region REG-005', ipAddress: '192.168.1.105', status: 'warning' },
+            { id: 'LOG-012', timestamp: '2025-12-11 15:10:22', user: 'ana.garcia', action: 'create', module: 'Monitoring', details: 'Created record MON-1846', ipAddress: '192.168.1.112', status: 'success' }
+        ];
+
+        let filteredLogs = [...auditLogs];
+
+        // Get action badge
+        function getActionBadge(action) {
+            const actionMap = {
+                'login': { color: 'blue', icon: 'sign-in-alt', text: 'Login' },
+                'create': { color: 'green', icon: 'plus-circle', text: 'Create' },
+                'update': { color: 'orange', icon: 'edit', text: 'Update' },
+                'delete': { color: 'red', icon: 'trash', text: 'Delete' },
+                'export': { color: 'purple', icon: 'download', text: 'Export' }
+            };
+            return actionMap[action] || { color: 'slate', icon: 'circle', text: 'Other' };
+        }
+
+        // Get status badge
+        function getStatusBadge(status) {
+            const statusMap = {
+                'success': { bg: 'bg-green-100', text: 'text-green-800', label: 'Success' },
+                'warning': { bg: 'bg-orange-100', text: 'text-orange-800', label: 'Warning' },
+                'danger': { bg: 'bg-red-100', text: 'text-red-800', label: 'Failed' }
+            };
+            return statusMap[status] || { bg: 'bg-slate-100', text: 'text-slate-800', label: 'Unknown' };
+        }
+
+        // Render logs
+        function renderLogs() {
+            const tbody = document.getElementById('logsTable');
+            tbody.innerHTML = '';
+
+            filteredLogs.forEach(log => {
+                const actionBadge = getActionBadge(log.action);
+                const statusBadge = getStatusBadge(log.status);
+                const row = `
+                    <tr class="border-b border-slate-100 hover:bg-slate-50 transition cursor-pointer" onclick="viewLogDetails('${log.id}')">
+                        <td class="py-3 px-4 text-slate-700 text-xs">${log.timestamp}</td>
+                        <td class="py-3 px-4 font-medium text-slate-900">${log.user}</td>
+                        <td class="py-3 px-4">
+                            <span class="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-${actionBadge.color}-100 text-${actionBadge.color}-800">
+                                <i class="fas fa-${actionBadge.icon}"></i>
+                                <span>${actionBadge.text}</span>
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 text-slate-700">${log.module}</td>
+                        <td class="py-3 px-4 text-slate-700 truncate max-w-xs">${log.details}</td>
+                        <td class="py-3 px-4 text-slate-600 text-xs">${log.ipAddress}</td>
+                        <td class="py-3 px-4">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusBadge.bg} ${statusBadge.text}">
+                                ${statusBadge.label}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // View log details
+        function viewLogDetails(logId) {
+            const log = auditLogs.find(l => l.id === logId);
+            if (!log) return;
+
+            const actionBadge = getActionBadge(log.action);
+            const statusBadge = getStatusBadge(log.status);
+            const content = `
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-xs text-slate-600 mb-1">Log ID</p>
+                            <p class="font-medium text-slate-900">${log.id}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-600 mb-1">Status</p>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusBadge.bg} ${statusBadge.text}">
+                                ${statusBadge.label}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-200 pt-4">
+                        <h4 class="font-bold text-slate-900 mb-3">Activity Information</h4>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p class="text-slate-600">Timestamp</p>
+                                <p class="font-medium text-slate-900">${log.timestamp}</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-600">User</p>
+                                <p class="font-medium text-slate-900">${log.user}</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-600">Action</p>
+                                <span class="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-${actionBadge.color}-100 text-${actionBadge.color}-800">
+                                    <i class="fas fa-${actionBadge.icon}"></i>
+                                    <span>${actionBadge.text}</span>
+                                </span>
+                            </div>
+                            <div>
+                                <p class="text-slate-600">Module</p>
+                                <p class="font-medium text-slate-900">${log.module}</p>
+                            </div>
+                            <div class="col-span-2">
+                                <p class="text-slate-600">Details</p>
+                                <p class="font-medium text-slate-900">${log.details}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-200 pt-4">
+                        <h4 class="font-bold text-slate-900 mb-3">System Information</h4>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p class="text-slate-600">IP Address</p>
+                                <p class="font-medium text-slate-900">${log.ipAddress}</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-600">User Agent</p>
+                                <p class="font-medium text-slate-900">Chrome/Windows</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('logDetailsContent').innerHTML = content;
+            document.getElementById('logDetailsModal').classList.add('show');
+        }
+
+        // Filter logs
+        function filterLogs() {
+            const userFilter = document.getElementById('userFilter').value;
+            const actionFilter = document.getElementById('actionFilter').value;
+            const fromDate = document.getElementById('fromDate').value;
+            const toDate = document.getElementById('toDate').value;
+
+            filteredLogs = auditLogs.filter(log => {
+                const logDate = log.timestamp.split(' ')[0];
+                const matchUser = !userFilter || log.user === userFilter;
+                const matchAction = !actionFilter || log.action === actionFilter;
+                const matchDateRange = logDate >= fromDate && logDate <= toDate;
+
+                return matchUser && matchAction && matchDateRange;
+            });
+
+            renderLogs();
+        }
+
+        // Export logs
+        function exportLogs() {
+            let csv = 'Audit Log Export\n';
+            csv += 'Exported on: ' + new Date().toLocaleString() + '\n\n';
+            csv += 'Timestamp,User,Action,Module,Details,IP Address,Status\n';
+            
+            filteredLogs.forEach(log => {
+                csv += `"${log.timestamp}","${log.user}","${log.action}","${log.module}","${log.details}","${log.ipAddress}","${log.status}"\n`;
+            });
+
+            const element = document.createElement('a');
+            element.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv));
+            element.setAttribute('download', 'audit_log.csv');
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
+        }
+
+        // Modal functions
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        // Toggle sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar.style.marginLeft === '-16rem') {
+                sidebar.style.marginLeft = '0';
+            } else {
+                sidebar.style.marginLeft = '-16rem';
+            }
+        }
+
+        // Toggle submenu
+        function toggleSubmenu(button) {
+            const submenu = button.nextElementSibling;
+            const icon = button.querySelector('.icon-rotate');
+            
+            if (submenu.classList.contains('hidden')) {
+                submenu.classList.remove('hidden');
+                icon.classList.add('rotated');
+            } else {
+                submenu.classList.add('hidden');
+                icon.classList.remove('rotated');
+            }
+        }
+
+        // Logout
+        function logout() {
+            window.location.href = '../index.html';
+        }
+
+        // Initialize
+        renderLogs();
+    </script>
+</body>
+</html>

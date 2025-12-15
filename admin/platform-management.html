@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DTI Monitoring System - Platform Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .sidebar-transition {
+            transition: all 0.3s ease;
+        }
+        .icon-rotate {
+            transition: transform 0.3s ease;
+        }
+        .icon-rotate.rotated {
+            transform: rotate(180deg);
+        }
+        .nav-link {
+            transition: all 0.2s ease;
+        }
+        .nav-link:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+            padding-left: 1.5rem;
+        }
+        .nav-link.active {
+            background-color: rgb(59, 130, 246);
+            color: white;
+            border-left: 4px solid white;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.show {
+            display: flex;
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div id="sidebar" class="w-64 bg-white border-r border-slate-200 shadow-sm sidebar-transition">
+            <div class="p-6 border-b border-slate-200">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold text-slate-900">DTI Monitor</h1>
+                        <p class="text-xs text-slate-500">Admin Panel</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Menu -->
+            <nav class="p-4 space-y-2">
+                <!-- Dashboard -->
+                <a href="dashboard.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-home w-5"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <!-- Monitoring -->
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-eye w-5"></i>
+                            <span>Monitoring</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate w-4"></i>
+                    </button>
+                    <div class="hidden submenu ml-8 space-y-1 mt-1">
+                        <a href="monitoring-records.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-list w-4"></i>
+                            <span>Records</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Assignments -->
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-tasks w-5"></i>
+                            <span>Assignments</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate w-4"></i>
+                    </button>
+                    <div class="hidden submenu ml-8 space-y-1 mt-1">
+                        <a href="assignment-management.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-list w-4"></i>
+                            <span>All Assignments</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Evaluations -->
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-check-circle w-5"></i>
+                            <span>Evaluations</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate w-4"></i>
+                    </button>
+                    <div class="hidden submenu ml-8 space-y-1 mt-1">
+                        <a href="evaluation-records.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-list w-4"></i>
+                            <span>Records</span>
+                        </a>
+                        <a href="issued-orders.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-file-alt w-4"></i>
+                            <span>Orders</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Validations -->
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-clipboard-check w-5"></i>
+                            <span>Validations</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate w-4"></i>
+                    </button>
+                    <div class="hidden submenu ml-8 space-y-1 mt-1">
+                        <a href="validation-records.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-list w-4"></i>
+                            <span>All Records</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Escalations -->
+                <a href="escalation-management.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-exclamation-circle w-5"></i>
+                    <span>Escalations</span>
+                </a>
+
+                <!-- Reports -->
+                <a href="reporting-analytics.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-chart-bar w-5"></i>
+                    <span>Reports</span>
+                </a>
+
+                <!-- Divider -->
+                <div class="my-4 border-t border-slate-200"></div>
+
+                <!-- Configuration -->
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-cog w-5"></i>
+                            <span>Configuration</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate rotated w-4"></i>
+                    </button>
+                    <div class="submenu ml-8 space-y-1 mt-1">
+                        <a href="user-management.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-users w-4"></i>
+                            <span>Users</span>
+                        </a>
+                        <a href="geographic-management.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-map-marker-alt w-4"></i>
+                            <span>Geographic</span>
+                        </a>
+                        <a href="platform-management.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm bg-blue-50 text-blue-600">
+                            <i class="fas fa-store w-4"></i>
+                            <span>Platforms</span>
+                        </a>
+                                      <a
+                href="category-management.html"
+                class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm"
+              >
+                <i class="fas fa-tag w-4"></i>
+                <span>Categories</span>
+              </a>
+                        <a href="audit-compliance.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-history w-4"></i>
+                            <span>Audit Log</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- User Profile -->
+            <div class="absolute bottom-0 left-0 w-64 p-4 border-t border-slate-200 bg-white">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-blue-600"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-slate-900">Admin User</p>
+                        <p class="text-xs text-slate-500">Administrator</p>
+                    </div>
+                    <button onclick="logout()" class="text-slate-400 hover:text-red-600 transition">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Navigation Bar -->
+            <div class="bg-white border-b border-slate-200 shadow-sm px-8 py-4 flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleSidebar()" class="text-slate-600 hover:text-slate-900 transition">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h2 class="text-2xl font-bold text-slate-900">Platform Management</h2>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <button class="relative text-slate-600 hover:text-slate-900">
+                        <i class="fas fa-bell text-lg"></i>
+                        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">3</span>
+                    </button>
+                    <button class="text-slate-600 hover:text-slate-900">
+                        <i class="fas fa-search text-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="flex-1 overflow-auto">
+                <div class="p-8">
+                    <!-- Quick Stats -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <p class="text-slate-600 text-sm font-medium mb-2">Total Platforms</p>
+                            <p class="text-3xl font-bold text-slate-900">8</p>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <p class="text-slate-600 text-sm font-medium mb-2">Active</p>
+                            <p class="text-3xl font-bold text-green-600">7</p>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <p class="text-slate-600 text-sm font-medium mb-2">Monitoring Records</p>
+                            <p class="text-3xl font-bold text-blue-600">2,847</p>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <p class="text-slate-600 text-sm font-medium mb-2">Violations</p>
+                            <p class="text-3xl font-bold text-orange-600">342</p>
+                        </div>
+                    </div>
+
+                    <!-- Platforms Section -->
+                    <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-bold text-slate-900">E-Commerce Platforms</h3>
+                            <button onclick="openPlatformModal()" class="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition text-sm">
+                                <i class="fas fa-plus"></i>
+                                <span>Add Platform</span>
+                            </button>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4" id="platformsList">
+                            <!-- Platforms populated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Platform Details Table -->
+                    <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+                        <h3 class="text-lg font-bold text-slate-900 mb-4">Platform Performance</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="border-b border-slate-200">
+                                        <th class="text-left py-3 px-4 font-medium text-slate-700">Platform</th>
+                                        <th class="text-left py-3 px-4 font-medium text-slate-700">Category</th>
+                                        <th class="text-left py-3 px-4 font-medium text-slate-700">Records</th>
+                                        <th class="text-left py-3 px-4 font-medium text-slate-700">Violations</th>
+                                        <th class="text-left py-3 px-4 font-medium text-slate-700">Compliance</th>
+                                        <th class="text-left py-3 px-4 font-medium text-slate-700">Status</th>
+                                        <th class="text-left py-3 px-4 font-medium text-slate-700">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="platformTable">
+                                    <!-- Platform data populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Platform Modal -->
+    <div id="platformModal" class="modal">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl mx-4">
+            <div class="border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+                <h3 class="text-xl font-bold text-slate-900">Add E-Commerce Platform</h3>
+                <button onclick="closeModal('platformModal')" class="text-slate-400 hover:text-slate-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Platform Name</label>
+                        <input type="text" id="platformName" placeholder="e.g., Lazada" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Category</label>
+                        <select id="platformCategory" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <option value="">Select category</option>
+                            <option value="Marketplace">Marketplace</option>
+                            <option value="Social Commerce">Social Commerce</option>
+                            <option value="Retail">Retail</option>
+                            <option value="Auction">Auction</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Platform URL</label>
+                        <input type="url" id="platformUrl" placeholder="https://example.com" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-2">Contact Email</label>
+                        <input type="email" id="platformEmail" placeholder="contact@platform.com" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                </div>
+            </div>
+            <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex justify-end space-x-3">
+                <button onclick="closeModal('platformModal')" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50">
+                    Cancel
+                </button>
+                <button onclick="savePlatform()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition">
+                    Add Platform
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Platform Modal -->
+    <div id="viewPlatformModal" class="modal">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl mx-4 max-h-screen overflow-auto">
+            <div class="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+                <h3 class="text-xl font-bold text-slate-900">Platform Details</h3>
+                <button onclick="closeModal('viewPlatformModal')" class="text-slate-400 hover:text-slate-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6" id="viewPlatformContent"></div>
+            <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex justify-end space-x-3">
+                <button onclick="closeModal('viewPlatformModal')" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data
+        const platforms = [
+            {
+                id: 'PLT-001',
+                name: 'Lazada',
+                category: 'Marketplace',
+                url: 'https://www.lazada.com.ph',
+                email: 'contact@lazada.com',
+                records: 487,
+                violations: 52,
+                compliance: 89,
+                status: 'active',
+                joinDate: '2025-01-10'
+            },
+            {
+                id: 'PLT-002',
+                name: 'Shopee',
+                category: 'Marketplace',
+                url: 'https://www.shopee.ph',
+                email: 'contact@shopee.com',
+                records: 456,
+                violations: 48,
+                compliance: 89,
+                status: 'active',
+                joinDate: '2025-01-15'
+            },
+            {
+                id: 'PLT-003',
+                name: 'Facebook Marketplace',
+                category: 'Social Commerce',
+                url: 'https://www.facebook.com/marketplace',
+                email: 'business@facebook.com',
+                records: 392,
+                violations: 41,
+                compliance: 89,
+                status: 'active',
+                joinDate: '2025-02-01'
+            },
+            {
+                id: 'PLT-004',
+                name: 'TikTok Shop',
+                category: 'Social Commerce',
+                url: 'https://www.tiktok.com/shop',
+                email: 'shop@tiktok.com',
+                records: 198,
+                violations: 28,
+                compliance: 86,
+                status: 'active',
+                joinDate: '2025-02-15'
+            },
+            {
+                id: 'PLT-005',
+                name: 'Carousell',
+                category: 'Marketplace',
+                url: 'https://www.carousell.ph',
+                email: 'support@carousell.com',
+                records: 156,
+                violations: 24,
+                compliance: 85,
+                status: 'active',
+                joinDate: '2025-03-01'
+            },
+            {
+                id: 'PLT-006',
+                name: 'OLX',
+                category: 'Marketplace',
+                url: 'https://www.olx.ph',
+                email: 'support@olx.com',
+                records: 234,
+                violations: 38,
+                compliance: 84,
+                status: 'active',
+                joinDate: '2025-03-10'
+            },
+            {
+                id: 'PLT-007',
+                name: 'Instagram Shopping',
+                category: 'Social Commerce',
+                url: 'https://www.instagram.com',
+                email: 'business@instagram.com',
+                records: 189,
+                violations: 35,
+                compliance: 82,
+                status: 'inactive',
+                joinDate: '2025-03-20'
+            },
+            {
+                id: 'PLT-008',
+                name: 'Viber Commerce',
+                category: 'Social Commerce',
+                url: 'https://www.viber.com',
+                email: 'commerce@viber.com',
+                records: 135,
+                violations: 20,
+                compliance: 85,
+                status: 'active',
+                joinDate: '2025-04-05'
+            }
+        ];
+
+        // Get status badge
+        function getStatusBadge(status) {
+            return status === 'active' ? 
+                { bg: 'bg-green-100', text: 'text-green-800', label: 'Active' } :
+                { bg: 'bg-orange-100', text: 'text-orange-800', label: 'Inactive' };
+        }
+
+        // Render platforms grid
+        function renderPlatforms() {
+            const list = document.getElementById('platformsList');
+            list.innerHTML = '';
+            platforms.forEach(platform => {
+                const badge = getStatusBadge(platform.status);
+                const card = `
+                    <div class="bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg border border-slate-200 p-4 hover:shadow-md transition">
+                        <div class="flex items-center justify-between mb-3">
+                            <h4 class="font-bold text-slate-900">${platform.name}</h4>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${badge.bg} ${badge.text}">
+                                ${badge.label}
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-600 mb-2">${platform.category}</p>
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-slate-700"><strong>${platform.records}</strong> records</span>
+                            <button onclick="viewPlatform('${platform.id}')" class="text-blue-600 hover:text-blue-800">
+                                <i class="fas fa-info-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                list.innerHTML += card;
+            });
+        }
+
+        // Render platform table
+        function renderPlatformTable() {
+            const table = document.getElementById('platformTable');
+            table.innerHTML = '';
+            platforms.forEach(platform => {
+                const badge = getStatusBadge(platform.status);
+                const row = `
+                    <tr class="border-b border-slate-100 hover:bg-slate-50 transition">
+                        <td class="py-3 px-4 font-medium text-slate-900">${platform.name}</td>
+                        <td class="py-3 px-4 text-slate-700">${platform.category}</td>
+                        <td class="py-3 px-4 text-slate-700">${platform.records}</td>
+                        <td class="py-3 px-4 text-orange-600 font-medium">${platform.violations}</td>
+                        <td class="py-3 px-4 text-slate-700">${platform.compliance}%</td>
+                        <td class="py-3 px-4">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${badge.bg} ${badge.text}">
+                                ${badge.label}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 space-x-2">
+                            <button onclick="viewPlatform('${platform.id}')" class="text-blue-600 hover:text-blue-800 transition text-sm">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                            <button onclick="deletePlatform('${platform.id}')" class="text-red-600 hover:text-red-800 transition text-sm">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                table.innerHTML += row;
+            });
+        }
+
+        // View platform details
+        function viewPlatform(platformId) {
+            const platform = platforms.find(p => p.id === platformId);
+            if (!platform) return;
+
+            const badge = getStatusBadge(platform.status);
+            const content = `
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-xs text-slate-600 mb-1">Platform ID</p>
+                            <p class="font-medium text-slate-900">${platform.id}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-600 mb-1">Status</p>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${badge.bg} ${badge.text}">
+                                ${badge.label}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-200 pt-4">
+                        <h4 class="font-bold text-slate-900 mb-3">Platform Information</h4>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p class="text-slate-600">Platform Name</p>
+                                <p class="font-medium text-slate-900">${platform.name}</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-600">Category</p>
+                                <p class="font-medium text-slate-900">${platform.category}</p>
+                            </div>
+                            <div class="col-span-2">
+                                <p class="text-slate-600">Website</p>
+                                <a href="${platform.url}" target="_blank" class="font-medium text-blue-600 hover:text-blue-800">${platform.url}</a>
+                            </div>
+                            <div class="col-span-2">
+                                <p class="text-slate-600">Contact Email</p>
+                                <p class="font-medium text-slate-900">${platform.email}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-200 pt-4">
+                        <h4 class="font-bold text-slate-900 mb-3">Monitoring Statistics</h4>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p class="text-slate-600">Total Records</p>
+                                <p class="font-medium text-slate-900 text-lg">${platform.records}</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-600">Violations Found</p>
+                                <p class="font-medium text-orange-600 text-lg">${platform.violations}</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-600">Compliance Rate</p>
+                                <p class="font-medium text-blue-600 text-lg">${platform.compliance}%</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-600">Join Date</p>
+                                <p class="font-medium text-slate-900">${platform.joinDate}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('viewPlatformContent').innerHTML = content;
+            document.getElementById('viewPlatformModal').classList.add('show');
+        }
+
+        // Open platform modal
+        function openPlatformModal() {
+            document.getElementById('platformModal').classList.add('show');
+        }
+
+        // Save platform
+        function savePlatform() {
+            const name = document.getElementById('platformName').value;
+            const category = document.getElementById('platformCategory').value;
+            const url = document.getElementById('platformUrl').value;
+            const email = document.getElementById('platformEmail').value;
+
+            if (!name || !category || !url || !email) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            const newPlatform = {
+                id: 'PLT-' + String(platforms.length + 1).padStart(3, '0'),
+                name,
+                category,
+                url,
+                email,
+                records: 0,
+                violations: 0,
+                compliance: 100,
+                status: 'active',
+                joinDate: new Date().toISOString().split('T')[0]
+            };
+
+            platforms.push(newPlatform);
+            renderPlatforms();
+            renderPlatformTable();
+            closeModal('platformModal');
+            alert('Platform added successfully!');
+
+            document.getElementById('platformName').value = '';
+            document.getElementById('platformCategory').value = '';
+            document.getElementById('platformUrl').value = '';
+            document.getElementById('platformEmail').value = '';
+        }
+
+        // Delete platform
+        function deletePlatform(platformId) {
+            if (confirm('Are you sure you want to delete this platform?')) {
+                const index = platforms.findIndex(p => p.id === platformId);
+                if (index > -1) {
+                    platforms.splice(index, 1);
+                    renderPlatforms();
+                    renderPlatformTable();
+                    alert('Platform deleted successfully!');
+                }
+            }
+        }
+
+        // Modal functions
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        // Toggle sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar.style.marginLeft === '-16rem') {
+                sidebar.style.marginLeft = '0';
+            } else {
+                sidebar.style.marginLeft = '-16rem';
+            }
+        }
+
+        // Toggle submenu
+        function toggleSubmenu(button) {
+            const submenu = button.nextElementSibling;
+            const icon = button.querySelector('.icon-rotate');
+            
+            if (submenu.classList.contains('hidden')) {
+                submenu.classList.remove('hidden');
+                icon.classList.add('rotated');
+            } else {
+                submenu.classList.add('hidden');
+                icon.classList.remove('rotated');
+            }
+        }
+
+        // Logout
+        function logout() {
+            window.location.href = '../index.html';
+        }
+
+        // Initialize
+        renderPlatforms();
+        renderPlatformTable();
+    </script>
+</body>
+</html>

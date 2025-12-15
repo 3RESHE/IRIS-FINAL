@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DTI Monitoring System - Evaluation Records</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .sidebar-transition {
+            transition: all 0.3s ease;
+        }
+        .icon-rotate {
+            transition: transform 0.3s ease;
+        }
+        .icon-rotate.rotated {
+            transform: rotate(180deg);
+        }
+        .nav-link {
+            transition: all 0.2s ease;
+        }
+        .nav-link:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+            padding-left: 1.5rem;
+        }
+        .nav-link.active {
+            background-color: rgb(59, 130, 246);
+            color: white;
+            border-left: 4px solid white;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal.show {
+            display: flex;
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <div class="flex h-screen">
+        <!-- Sidebar -->
+        <div id="sidebar" class="w-64 bg-white border-r border-slate-200 shadow-sm sidebar-transition">
+            <div class="p-6 border-b border-slate-200">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-shield-alt text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold text-slate-900">DTI Monitor</h1>
+                        <p class="text-xs text-slate-500">Admin Panel</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Navigation Menu -->
+            <nav class="p-4 space-y-2">
+                <!-- Dashboard -->
+                <a href="dashboard.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-home w-5"></i>
+                    <span>Dashboard</span>
+                </a>
+
+                <!-- Monitoring -->
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-eye w-5"></i>
+                            <span>Monitoring</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate w-4"></i>
+                    </button>
+                    <div class="hidden submenu ml-8 space-y-1 mt-1">
+                        <a href="monitoring-records.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-list w-4"></i>
+                            <span>Records</span>
+                        </a>
+
+                    </div>
+                </div>
+
+                <!-- Assignments -->
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-tasks w-5"></i>
+                            <span>Assignments</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate w-4"></i>
+                    </button>
+                    <div class="hidden submenu ml-8 space-y-1 mt-1">
+                        <a href="assignment-management.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-list w-4"></i>
+                            <span>All Assignments</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Evaluations -->
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-check-circle w-5"></i>
+                            <span>Evaluations</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate rotated w-4"></i>
+                    </button>
+                    <div class="submenu ml-8 space-y-1 mt-1">
+                        <a href="evaluation-records.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm bg-blue-50 text-blue-600">
+                            <i class="fas fa-list w-4"></i>
+                            <span>Records</span>
+                        </a>
+                        <a href="issued-orders.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-file-alt w-4"></i>
+                            <span>Orders</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Validations -->
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-clipboard-check w-5"></i>
+                            <span>Validations</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate w-4"></i>
+                    </button>
+                    <div class="hidden submenu ml-8 space-y-1 mt-1">
+                        <a href="#" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-list w-4"></i>
+                            <span>All Records</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Escalations -->
+                <a href="escalation-management.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-exclamation-circle w-5"></i>
+                    <span>Escalations</span>
+                </a>
+
+                <!-- Reports -->
+                <a href="reporting-analytics.html" class="nav-link flex items-center space-x-3 px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50">
+                    <i class="fas fa-chart-bar w-5"></i>
+                    <span>Reports</span>
+                </a>
+
+                <!-- Divider -->
+                <div class="my-4 border-t border-slate-200"></div>
+
+                <!-- Configuration -->
+                <div>
+                    <button class="nav-link w-full flex items-center justify-between px-4 py-3 rounded-lg text-slate-700 hover:bg-slate-50" onclick="toggleSubmenu(this)">
+                        <div class="flex items-center space-x-3">
+                            <i class="fas fa-cog w-5"></i>
+                            <span>Configuration</span>
+                        </div>
+                        <i class="fas fa-chevron-down icon-rotate w-4"></i>
+                    </button>
+                    <div class="hidden submenu ml-8 space-y-1 mt-1">
+                        <a href="user-management.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-users w-4"></i>
+                            <span>Users</span>
+                        </a>
+                        <a href="geographic-management.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-map-marker-alt w-4"></i>
+                            <span>Geographic</span>
+                        </a>
+                        <a href="platform-management.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-store w-4"></i>
+                            <span>Platforms</span>
+                        </a>
+                                      <a
+                href="category-management.html"
+                class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm"
+              >
+                <i class="fas fa-tag w-4"></i>
+                <span>Categories</span>
+              </a>
+                        <a href="audit-compliance.html" class="nav-link flex items-center space-x-3 px-4 py-2 rounded-lg text-slate-600 text-sm">
+                            <i class="fas fa-history w-4"></i>
+                            <span>Audit Log</span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- User Profile -->
+            <div class="absolute bottom-0 left-0 w-64 p-4 border-t border-slate-200 bg-white">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <i class="fas fa-user text-blue-600"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-sm font-medium text-slate-900">Admin User</p>
+                        <p class="text-xs text-slate-500">Administrator</p>
+                    </div>
+                    <button onclick="logout()" class="text-slate-400 hover:text-red-600 transition">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Navigation Bar -->
+            <div class="bg-white border-b border-slate-200 shadow-sm px-8 py-4 flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <button onclick="toggleSidebar()" class="text-slate-600 hover:text-slate-900 transition">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <h2 class="text-2xl font-bold text-slate-900">Evaluation Records</h2>
+                </div>
+                <div class="flex items-center space-x-6">
+                    <button class="relative text-slate-600 hover:text-slate-900">
+                        <i class="fas fa-bell text-lg"></i>
+                        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">4</span>
+                    </button>
+                    <button class="text-slate-600 hover:text-slate-900">
+                        <i class="fas fa-search text-lg"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="flex-1 overflow-auto">
+                <div class="p-8">
+                    <!-- Quick Stats -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <p class="text-slate-600 text-sm font-medium mb-2">Total Evaluations</p>
+                            <p class="text-3xl font-bold text-slate-900">284</p>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <p class="text-slate-600 text-sm font-medium mb-2">Takedown Orders (TDO)</p>
+                            <p class="text-3xl font-bold text-red-600">156</p>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <p class="text-slate-600 text-sm font-medium mb-2">Compliance Orders (CO)</p>
+                            <p class="text-3xl font-bold text-orange-600">98</p>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-4">
+                            <p class="text-slate-600 text-sm font-medium mb-2">No Action</p>
+                            <p class="text-3xl font-bold text-slate-600">30</p>
+                        </div>
+                    </div>
+
+                    <!-- Filters Section -->
+                    <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-6">
+                        <h3 class="text-lg font-bold text-slate-900 mb-4">Filters</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                            <!-- Search -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">Search</label>
+                                <input type="text" id="searchInput" placeholder="Evaluation ID, DTS #..." class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+
+                            <!-- Action Type Filter -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">Action Type</label>
+                                <select id="actionTypeFilter" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">All Types</option>
+                                    <option value="TDO">Takedown Order (TDO)</option>
+                                    <option value="CO">Compliance Order (CO)</option>
+                                    <option value="No Action">No Action</option>
+                                </select>
+                            </div>
+
+                            <!-- Status Filter -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">Status</label>
+                                <select id="statusFilter" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">All Status</option>
+                                    <option value="issued">Issued</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="reissued">Reissued</option>
+                                    <option value="not_included">Not Included</option>
+                                </select>
+                            </div>
+
+                            <!-- Evaluator Filter -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">Evaluator</label>
+                                <select id="evaluatorFilter" class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">All Evaluators</option>
+                                    <option value="Maria Santos">Maria Santos</option>
+                                    <option value="Juan Dela Cruz">Juan Dela Cruz</option>
+                                    <option value="Ana Garcia">Ana Garcia</option>
+                                </select>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="flex items-end gap-2">
+                                <button onclick="filterEvaluations()" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition">
+                                    <i class="fas fa-search mr-2"></i>Filter
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Evaluations Table -->
+                    <div class="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
+                        <h3 class="text-lg font-bold text-slate-900 mb-4">All Evaluations</h3>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="border-b border-slate-200">
+                                        <th class="text-left py-3 px-4 font-medium text-slate-700">Evaluation ID</th>
+                                        <th class="text-left py-3 px-4 font-medium text-slate-700">Monitoring ID</th>
+                                        <th class="text-left py-3 px-4 font-medium text-slate-700">DTS Number</th>
+                                        <th class="text-left py-3 px-4 font-medium text-slate-700">Action Type</th>
+                                        <th class="text-left py-3 px-4 font-medium text-slate-700">Status</th>
+                                        <th class="text-left py-3 px-4 font-medium text-slate-700">Evaluator</th>
+                                        <th class="text-left py-3 px-4 font-medium text-slate-700">Date</th>
+                                        <th class="text-left py-3 px-4 font-medium text-slate-700">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="evaluationsTable">
+                                    <!-- Evaluations populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Evaluation Details Modal -->
+    <div id="detailsModal" class="modal">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-2xl mx-4 max-h-screen overflow-auto">
+            <div class="sticky top-0 bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+                <h3 class="text-xl font-bold text-slate-900">Evaluation Details</h3>
+                <button onclick="closeModal('detailsModal')" class="text-slate-400 hover:text-slate-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6" id="detailsContent"></div>
+            <div class="bg-slate-50 px-6 py-4 border-t border-slate-200 flex justify-end space-x-3">
+                <button onclick="closeModal('detailsModal')" class="px-4 py-2 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data
+        const evaluations = [
+            {
+                id: 'EVAL-001',
+                monitoringId: 'MON-001247',
+                dtsNo: 'DTS-2025-00001',
+                seller: 'TechShop Philippines',
+                product: 'Counterfeit Electronics',
+                actionType: 'TDO',
+                actionStatus: 'issued',
+                evaluator: 'Maria Santos',
+                evaluationDate: '2025-12-12',
+                dateOfAction: '2025-12-12',
+                remarks: 'Multiple trademark violations detected. Product must be removed within 48 hours.',
+                validationStatus: 'pending'
+            },
+            {
+                id: 'EVAL-002',
+                monitoringId: 'MON-001246',
+                dtsNo: 'DTS-2025-00002',
+                seller: 'Online Store 24',
+                product: 'Prohibited Items',
+                actionType: 'CO',
+                actionStatus: 'issued',
+                evaluator: 'Juan Dela Cruz',
+                evaluationDate: '2025-12-11',
+                dateOfAction: '2025-12-11',
+                remarks: 'Health supplements must be made compliant with proper certifications.',
+                validationStatus: 'validated'
+            },
+            {
+                id: 'EVAL-003',
+                monitoringId: 'MON-001245',
+                dtsNo: 'DTS-2025-00003',
+                seller: 'Digital Hub',
+                product: 'Fake Branded Items',
+                actionType: 'TDO',
+                actionStatus: 'issued',
+                evaluator: 'Ana Garcia',
+                evaluationDate: '2025-12-10',
+                dateOfAction: '2025-12-10',
+                remarks: 'Counterfeit Nike and Adidas products. Clear trademark infringement.',
+                validationStatus: 'pending'
+            },
+            {
+                id: 'EVAL-004',
+                monitoringId: 'MON-001244',
+                dtsNo: 'DTS-2025-00004',
+                seller: 'Smart Seller',
+                product: 'Counterfeit Goods',
+                actionType: 'TDO',
+                actionStatus: 'reissued',
+                evaluator: 'Maria Santos',
+                evaluationDate: '2025-12-09',
+                dateOfAction: '2025-12-09',
+                remarks: 'Fake Louis Vuitton bags. Order was not complied initially, reissued.',
+                validationStatus: 'pending'
+            },
+            {
+                id: 'EVAL-005',
+                monitoringId: 'MON-001243',
+                dtsNo: 'DTS-2025-00005',
+                seller: 'Fashion Forward PH',
+                product: 'Knockoff Designer Bags',
+                actionType: 'TDO',
+                actionStatus: 'issued',
+                evaluator: 'Juan Dela Cruz',
+                evaluationDate: '2025-12-08',
+                dateOfAction: '2025-12-08',
+                remarks: 'Counterfeit Gucci merchandise detected and documented.',
+                validationStatus: 'validated'
+            },
+            {
+                id: 'EVAL-006',
+                monitoringId: 'MON-001242',
+                dtsNo: 'DTS-2025-00006',
+                seller: 'Value Store',
+                product: 'Unlicensed Software',
+                actionType: 'CO',
+                actionStatus: 'issued',
+                evaluator: 'Ana Garcia',
+                evaluationDate: '2025-12-07',
+                dateOfAction: '2025-12-07',
+                remarks: 'Pirated Microsoft products must be removed or proper licenses obtained.',
+                validationStatus: 'validated'
+            }
+        ];
+
+        let filteredEvaluations = [...evaluations];
+
+        // Get action type badge
+        function getActionBadge(actionType) {
+            const actionMap = {
+                'TDO': { color: 'red', text: 'Takedown Order' },
+                'CO': { color: 'orange', text: 'Compliance Order' },
+                'No Action': { color: 'slate', text: 'No Action' }
+            };
+            return actionMap[actionType] || { color: 'slate', text: 'Unknown' };
+        }
+
+        // Get status badge
+        function getStatusBadge(status) {
+            const statusMap = {
+                'issued': { color: 'blue', text: 'Issued' },
+                'pending': { color: 'orange', text: 'Pending' },
+                'reissued': { color: 'purple', text: 'Reissued' },
+                'not_included': { color: 'slate', text: 'Not Included' }
+            };
+            return statusMap[status] || { color: 'slate', text: 'Unknown' };
+        }
+
+        // Render evaluations
+        function renderEvaluations() {
+            const tbody = document.getElementById('evaluationsTable');
+            tbody.innerHTML = '';
+
+            filteredEvaluations.forEach(evaluation => {
+                const actionBadge = getActionBadge(evaluation.actionType);
+                const statusBadge = getStatusBadge(evaluation.actionStatus);
+                const row = `
+                    <tr class="border-b border-slate-100 hover:bg-slate-50 transition">
+                        <td class="py-3 px-4 font-medium text-slate-900">${evaluation.id}</td>
+                        <td class="py-3 px-4 text-slate-700">${evaluation.monitoringId}</td>
+                        <td class="py-3 px-4 font-medium text-blue-600">${evaluation.dtsNo}</td>
+                        <td class="py-3 px-4">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-${actionBadge.color}-100 text-${actionBadge.color}-800">
+                                ${actionBadge.text}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-${statusBadge.color}-100 text-${statusBadge.color}-800">
+                                ${statusBadge.text}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 text-slate-700">${evaluation.evaluator}</td>
+                        <td class="py-3 px-4 text-slate-600">${evaluation.evaluationDate}</td>
+                        <td class="py-3 px-4 space-x-2">
+                            <button onclick="viewDetails('${evaluation.id}')" class="text-blue-600 hover:text-blue-800 transition text-sm">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // View details
+        function viewDetails(evaluationId) {
+            const evaluation = evaluations.find(e => e.id === evaluationId);
+            if (!evaluation) return;
+
+            const actionBadge = getActionBadge(evaluation.actionType);
+            const statusBadge = getStatusBadge(evaluation.actionStatus);
+            const content = `
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-xs text-slate-600 mb-1">Evaluation ID</p>
+                            <p class="font-medium text-slate-900">${evaluation.id}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-600 mb-1">DTS Number</p>
+                            <p class="font-medium text-blue-600">${evaluation.dtsNo}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-600 mb-1">Evaluator</p>
+                            <p class="font-medium text-slate-900">${evaluation.evaluator}</p>
+                        </div>
+                        <div>
+                            <p class="text-xs text-slate-600 mb-1">Evaluation Date</p>
+                            <p class="font-medium text-slate-900">${evaluation.evaluationDate}</p>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-200 pt-4">
+                        <h4 class="font-bold text-slate-900 mb-3">Evaluation Information</h4>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p class="text-slate-600">Monitoring Record</p>
+                                <p class="font-medium text-slate-900">${evaluation.monitoringId}</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-600">Seller</p>
+                                <p class="font-medium text-slate-900">${evaluation.seller}</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-600">Product</p>
+                                <p class="font-medium text-slate-900">${evaluation.product}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-200 pt-4">
+                        <h4 class="font-bold text-slate-900 mb-3">Action Details</h4>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                                <p class="text-slate-600">Action Type</p>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-${actionBadge.color}-100 text-${actionBadge.color}-800">
+                                    ${actionBadge.text}
+                                </span>
+                            </div>
+                            <div>
+                                <p class="text-slate-600">Action Status</p>
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-${statusBadge.color}-100 text-${statusBadge.color}-800">
+                                    ${statusBadge.text}
+                                </span>
+                            </div>
+                            <div>
+                                <p class="text-slate-600">Date of Action</p>
+                                <p class="font-medium text-slate-900">${evaluation.dateOfAction}</p>
+                            </div>
+                            <div>
+                                <p class="text-slate-600">Validation Status</p>
+                                <p class="font-medium text-slate-900">${evaluation.validationStatus.charAt(0).toUpperCase() + evaluation.validationStatus.slice(1)}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-200 pt-4">
+                        <h4 class="font-bold text-slate-900 mb-2">Evaluation Remarks</h4>
+                        <p class="text-slate-700 text-sm">${evaluation.remarks}</p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('detailsContent').innerHTML = content;
+            document.getElementById('detailsModal').classList.add('show');
+        }
+
+        // Filter evaluations
+        function filterEvaluations() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const actionTypeFilter = document.getElementById('actionTypeFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const evaluatorFilter = document.getElementById('evaluatorFilter').value;
+
+            filteredEvaluations = evaluations.filter(evaluation => {
+                const matchSearch = !searchTerm || 
+                    evaluation.id.toLowerCase().includes(searchTerm) ||
+                    evaluation.dtsNo.toLowerCase().includes(searchTerm) ||
+                    evaluation.monitoringId.toLowerCase().includes(searchTerm);
+                
+                const matchActionType = !actionTypeFilter || evaluation.actionType === actionTypeFilter;
+                const matchStatus = !statusFilter || evaluation.actionStatus === statusFilter;
+                const matchEvaluator = !evaluatorFilter || evaluation.evaluator === evaluatorFilter;
+
+                return matchSearch && matchActionType && matchStatus && matchEvaluator;
+            });
+
+            renderEvaluations();
+        }
+
+        // Modal functions
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        // Toggle sidebar
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar.style.marginLeft === '-16rem') {
+                sidebar.style.marginLeft = '0';
+            } else {
+                sidebar.style.marginLeft = '-16rem';
+            }
+        }
+
+        // Toggle submenu
+        function toggleSubmenu(button) {
+            const submenu = button.nextElementSibling;
+            const icon = button.querySelector('.icon-rotate');
+            
+            if (submenu.classList.contains('hidden')) {
+                submenu.classList.remove('hidden');
+                icon.classList.add('rotated');
+            } else {
+                submenu.classList.add('hidden');
+                icon.classList.remove('rotated');
+            }
+        }
+
+        // Logout
+        function logout() {
+            window.location.href = '../index.html';
+        }
+
+        // Initialize
+        renderEvaluations();
+    </script>
+</body>
+</html>
