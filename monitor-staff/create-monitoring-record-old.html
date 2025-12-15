@@ -111,6 +111,9 @@
             background-color: #10b981;
             color: white;
         }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body class="bg-slate-50">
@@ -159,7 +162,6 @@
                     <i class="fas fa-chart-bar w-5"></i>
                     <span>Reports</span>
                 </a>
-
             </nav>
 
             <div class="absolute bottom-0 left-0 w-64 p-4 border-t border-slate-200 bg-white">
@@ -246,7 +248,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="input-group">
                                 <label class="input-label required-field">Date Monitored</label>
-                                <input type="date" id="dateMonitored" class="input-field" value="2025-12-12">
+                                <input type="date" id="dateMonitored" class="input-field" value="2025-12-15">
                             </div>
                             <div class="input-group">
                                 <label class="input-label required-field">Platform</label>
@@ -318,6 +320,33 @@
                             <input type="text" id="productName" class="input-field" placeholder="Name of the product being monitored">
                         </div>
 
+                        <div class="input-group">
+                            <label class="input-label required-field">Product Category</label>
+                            <select id="productCategory" class="input-field" onchange="handleCategoryChange()">
+                                <option value="">Select Category</option>
+                                <option value="Food and Beverages">Food and Beverages</option>
+                                <option value="Appliances">Appliances</option>
+                                <option value="Electronics (Gadgets)">Electronics (Gadgets)</option>
+                                <option value="Travel">Travel</option>
+                                <option value="Furniture">Furniture</option>
+                                <option value="Hardware">Hardware</option>
+                                <option value="Fashion">Fashion</option>
+                                <option value="Cosmetics and Personal Care">Cosmetics and Personal Care</option>
+                                <option value="Toys, Hobbies, Collectibles">Toys, Hobbies, Collectibles</option>
+                                <option value="Arts and Crafts">Arts and Crafts</option>
+                                <option value="Pet Essentials">Pet Essentials</option>
+                                <option value="Health and Wellness">Health and Wellness</option>
+                                <option value="Plants and Gardening">Plants and Gardening</option>
+                                <option value="Home Essentials">Home Essentials</option>
+                                <option value="others">Others (Please Specify)</option>
+                            </select>
+                        </div>
+
+                        <div id="customCategoryGroup" class="input-group hidden">
+                            <label class="input-label required-field">Please Specify Category</label>
+                            <input type="text" id="customCategory" class="input-field" placeholder="Enter custom category name">
+                        </div>
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="input-group">
                                 <label class="input-label">Brand/Logo</label>
@@ -341,13 +370,8 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div class="input-group">
-                                <label class="input-label required-field">Fair Trade Laws Compliance</label>
-                                <select id="fairTrade" class="input-field">
-                                    <option value="">Select Status</option>
-                                    <option value="compliant">Compliant with Fair Trade Laws</option>
-                                    <option value="non-compliant">Non-Compliant with Fair Trade Laws</option>
-                                    <option value="not-applicable">Not Applicable</option>
-                                </select>
+                                <label class="input-label required-field">Applicable Law Name</label>
+                                <input type="text" id="fairTrade" class="input-field" placeholder="e.g., Fair Trade Laws, Consumer Protection Act, etc.">
                             </div>
                             <div class="input-group">
                                 <label class="input-label">Violation Type</label>
@@ -449,19 +473,43 @@
     </div>
 
     <script>
+        // Handle category change
+        function handleCategoryChange() {
+            const categorySelect = document.getElementById('productCategory');
+            const customCategoryGroup = document.getElementById('customCategoryGroup');
+            const customCategoryInput = document.getElementById('customCategory');
+
+            if (categorySelect.value === 'others') {
+                customCategoryGroup.classList.remove('hidden');
+                customCategoryInput.required = true;
+            } else {
+                customCategoryGroup.classList.add('hidden');
+                customCategoryInput.required = false;
+                customCategoryInput.value = '';
+            }
+        }
+
         // Form submission
         function submitForm() {
             const dateMonitored = document.getElementById('dateMonitored').value;
             const platform = document.getElementById('platform').value;
             const sellerName = document.getElementById('sellerName').value;
             const productName = document.getElementById('productName').value;
+            const productCategory = document.getElementById('productCategory').value;
+            const customCategory = document.getElementById('customCategory').value;
             const prohibited = document.getElementById('prohibited').value;
             const url = document.getElementById('url').value;
             const fairTrade = document.getElementById('fairTrade').value;
 
             // Validation
-            if (!dateMonitored || !platform || !sellerName || !productName || !prohibited || !url || !fairTrade) {
+            if (!dateMonitored || !platform || !sellerName || !productName || !productCategory || !prohibited || !url || !fairTrade) {
                 alert('Please fill all required fields (marked with *)');
+                return;
+            }
+
+            // Check if custom category is filled when "Others" is selected
+            if (productCategory === 'others' && !customCategory.trim()) {
+                alert('Please specify the custom category');
                 return;
             }
 
@@ -490,6 +538,8 @@
                 document.getElementById('city').value = '';
                 document.getElementById('barangay').value = '';
                 document.getElementById('productName').value = '';
+                document.getElementById('productCategory').value = '';
+                document.getElementById('customCategory').value = '';
                 document.getElementById('brand').value = '';
                 document.getElementById('prohibited').value = '';
                 document.getElementById('description').value = '';
@@ -498,6 +548,7 @@
                 document.getElementById('url').value = '';
                 document.getElementById('remarks').value = '';
                 document.getElementById('successMessage').classList.add('hidden');
+                document.getElementById('customCategoryGroup').classList.add('hidden');
             }
         }
 
